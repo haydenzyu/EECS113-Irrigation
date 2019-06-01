@@ -195,15 +195,6 @@ class Adafruit_CharLCD(object):
             else:
                 self.write4bits(ord(char), True)
 				
-	def scrolling_message(self, text):
-        """ Send string to LCD. Scrolling from right to left"""
-        for char in text:
-            if char == '\n':
-                self.write4bits(false) #line ended
-            else:
-				lcd.setCursor(0,15)
-                self.write4bits(ord(char), True)
-				self.write4bits(0x00)
 
 
 if __name__ == '__main__':

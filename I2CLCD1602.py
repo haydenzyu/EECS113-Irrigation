@@ -41,7 +41,6 @@ def display_temp_hum(tempurature, humidity):
 def display_cimis(temperature, humidity, local_ET, cimis_ET, water_saving, addi_water):
 	mcp.output(3,1)     # turn on LCD backlight
     lcd.begin(16,2)     # set number of LCD lines and columns
-    lcd.setCursor(0,0)  # set cursor position
 	temperature_str = 'CIMIS Tempurature: ' + temperature + ' '
 	humidity_str = 'CIMIS Humidity: ' + humidity + ' '
 	local_ET_str = 'Local ET:' + local_ET + ' '
@@ -50,9 +49,14 @@ def display_cimis(temperature, humidity, local_ET, cimis_ET, water_saving, addi_
 	addi_water_str = 'Additional Water Used: ' + addi_water + ' '
 	top_line = #concatenate strings for top line on LCD
 	bot_line = #concatenate strings for bottom line on LCD
-	rolling_message
-	lcd.message(top_line)# display top line
-	lcd.message(bot_line)# display bottom line
+	while True:
+		lcd.setCursor(0,0)  # cursor top line
+		lcd.message(top_line[:16])# display top line
+		lcd.setCursor(0,1) # cursor bottom line
+		lcd.message(bot_line[:16])# display bottom line
+		top_line = top_line[1:]+top_line[0]# send first char to last 
+		bot_line = bot_line[1:]+bot_line[0]# send first char to last
+		
 		
 def destroy():
     lcd.clear()
