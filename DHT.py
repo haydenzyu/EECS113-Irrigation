@@ -29,16 +29,16 @@ def getIrrigationTime():
         tempDerate = localTemp[i] / cimisTemp[i]
         ET0 = ET0 + (cimisET[i] / (tempDerate * humidityDerate))
 
-    print("ET0: %.2f", ET0)
+    print("ET0: ", ET0)
 
     # get gallons of water needed for 3 hours (using gallons needed per day formula divided by 24)
     gallons = ((ET0 * pf * sqft *conversion) / IE) / 24
     gallons = 3 * gallons
-    print("Gallons Needed: %.2f", gallons)
+    print("Gallons Needed: ", gallons)
 
     # get time to run irrigation per hour
     irrigationTime = gallons / systemRate
-    print("Irrigation Time: %.2f", irrigationTime)
+    print("Irrigation Time: ", irrigationTime)
 
     # signal relay to turn on
 
@@ -70,8 +70,8 @@ def loop():
                 localHumidity[i] = 0
                 localTemp[i] = 0
 
-        print("Local Humidity: %.2f", localHumidity)
-        print("Local Temperature: %.2f", localTemp)
+        print("Local Humidity: ", localHumidity[hour])
+        print("Local Temperature: ", localTemp[hour])
         
         # if 60 values have been averagde, reset to next hour
         if (count >= 60):
