@@ -10,6 +10,7 @@ from Adafruit_LCD1602 import Adafruit_CharLCD
 
 from time import sleep, strftime
 from datetime import datetime
+import threading
  
 def get_cpu_temp():     # get CPU temperature and store it into file "/sys/class/thermal/thermal_zone0/temp"
     tmp = open('/sys/class/thermal/thermal_zone0/temp')
@@ -18,15 +19,16 @@ def get_cpu_temp():     # get CPU temperature and store it into file "/sys/class
     return '{:.2f}'.format( float(cpu)/1000 ) + ' C'
  
 def get_time_now():     # get system time
-    return datetime.now().strftime('    %H:%M:%S')
+    return datetime.now().strftime('    %H:%M:%S\n')
     
 def loop():
+    #print("hi")
     mcp.output(3,1)     # turn on LCD backlight
     lcd.begin(16,2)     # set number of LCD lines and columns
     while(True):         
         #lcd.clear()
         lcd.setCursor(0,0)  # set cursor position
-        lcd.message( 'CPU: ' + get_cpu_temp()+'\n' )# display CPU temperature
+        #lcd.message( 'CPU: ' + get_cpu_temp()+'\n' )# display CPU temperature
         lcd.message( get_time_now() )   # display the time
         sleep(1)
 		
@@ -50,13 +52,13 @@ def display_cimis(temperature, humidity, local_ET, cimis_ET, water_saving, addi_
     top_line = temperature_str + humidity_str #concatenate strings for top line on LCD
     bot_line = local_ET_str + cimis_ET_str #concatenate strings for bottom line on LCD
     while True:
-        lcd.setCursor(0,0)  # cursor top line
-        lcd.message(top_line[:16])# display top line
+        lcd.setCursor(0,0) # cursor top line
+        lcd.message(top_line[:16])
         lcd.setCursor(0,1) # cursor bottom line
         lcd.message(bot_line[:16])# display bottom line
         top_line = top_line[1:]+top_line[0]# send first char to last 
         bot_line = bot_line[1:]+bot_line[0]# send first char to last
-        sleep(0.5)
+        sleep(0.2)
 		
 		
 def destroy():
@@ -79,7 +81,10 @@ lcd = Adafruit_CharLCD(pin_rs=0, pin_e=2, pins_db=[4,5,6,7], GPIO=mcp)
 if __name__ == '__main__':
     print ('Program is starting ... ')
     try:
-        display_cimis('0','0','0','0','0','0')
+        t = threading.Thread(target=display_cimis, args=('0','0','0','0','0','0'))
+        t.daemon=True
+        t.start()
+        t.join()
     except KeyboardInterrupt:
         destroy()
 
