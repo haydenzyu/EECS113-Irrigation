@@ -25,8 +25,8 @@ def loop():
     t.start()
     # DHT.loop()
     while(True):
-        if (DHT.irrigationTime != 0):
-            print("Irrigation Time: %f", DHT.irrigationTime)
+        # if (DHT.irrigationTime != 0):
+        #    print("Irrigation Time: %f", DHT.irrigationTime)
         time.sleep(10)
 
 # main function to start program

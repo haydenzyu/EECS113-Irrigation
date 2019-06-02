@@ -3,8 +3,9 @@ import RPi.GPIO as GPIO
 import Freenove_DHT as DHT
 
 thermoPin = 11
-localHumidity = 0
-localTemp = 0
+localHumidity = [0,0,0]
+localTemp = [0,0,0]
+hour = 0
 irrigationTime = 0.0
 sqft = 200          # 200 square feet to be irrigated
 pf = 1.0            # plant factor for lawn
@@ -13,43 +14,69 @@ IE = 0.75           # irrigation efficiency (suggested to use 0.75)
 systemRate = 17     # 17 gallons per minute = 1020 gallons per hour
 
 def getIrrigationTime():
+    global irrigationTime
+
     # get ET, humidity, and temp from CIMIS
-    cimisHumidity = 72
-    cimisTemp = 63.0
-    cimisET = 0.00
+    cimisHumidity = [76, 71, 65]
+    cimisTemp = [61.3, 63.8, 66.8]
+    cimisET = [0.01, 0.02, 0.03]
 
     # get humidty and temp derating factors 
-    # get ET0 using these factors and CIMIS ET
-    humidityDerate = localHumidity / cimisHumidity
-    tempDerate = localTemp / cimisTemp
-    ET0 = cimisET / (tempDerate * humidityDerate)
+    # get ET0 for the 3 hours using these factors and CIMIS ET
+    ET0 = 0
+    for i in range(0, 2):
+        humidityDerate = localHumidity[i] / cimisHumidity[i]
+        tempDerate = localTemp[i] / cimisTemp[i]
+        ET0 = ET0 + (cimisET[i] / (tempDerate * humidityDerate))
 
-    # get gallons of water needed per hour (using gallons needed per day formula divided by 24)
+    print("ET0: %.2f", ET0)
+
+    # get gallons of water needed for 3 hours (using gallons needed per day formula divided by 24)
     gallons = ((ET0 * pf * sqft *conversion) / IE) / 24
-    print("Gallons Needed: %f", gallons)
+    gallons = 3 * gallons
+    print("Gallons Needed: %.2f", gallons)
 
     # get time to run irrigation per hour
     irrigationTime = gallons / systemRate
-    #print("Irrigation Time: %f", irrigationTime)
+    print("Irrigation Time: %.2f", irrigationTime)
+
+    # signal relay to turn on
+
 
 def loop():
+    global hour
+
     dht = DHT.DHT(thermoPin)        # creates DHT class object
+    count = 0                       # initialize minute count for an hour
 
     while(True):
-        if (localHumidity == 0 and localTemp == 0):
-            localHumidity = dht.humidity
-            localTemp = dht.temperature
+        # if the start of an hour, do not need to average 2 values
+        if (localHumidity[hour] == 0 and localTemp[hour] == 0):
+            localHumidity[hour] = dht.humidity
+            localTemp[hour] = dht.temperature
+        # otherwise avergae the new data with the past averages of the hour
         else:
-            localHumidity = (localHumidity + dht.humidity)/2
-            localTemp = (localTemp + dht.temperature)/2
-
+            localHumidity[hour] = (localHumidity[hour] + dht.humidity)/2
+            localTemp[hour] = (localTemp[hour] + dht.temperature)/2
+        
+        count += 1
         # check CIMIS for new data
         # if there is new data for the hour
+        if (count == 60 and hour == 2):
             getIrrigationTime()
-            localHumidity = 0
-            localTemp = 0
 
-        print("Local Humidity: %f", localHumidity)
-        print("Local Temperature: %f", localTemp)
+            # clear the past 3 hours of data
+            for i in range (0, 2):
+                localHumidity[i] = 0
+                localTemp[i] = 0
+
+        print("Local Humidity: %.2f", localHumidity)
+        print("Local Temperature: %.2f", localTemp)
         
+        # if 60 values have been averagde, reset to next hour
+        if (count >= 60):
+            count = 0
+            hour = (hour + 1) % 3
+
+        # sleep for 1 minute
         time.sleep(60)
