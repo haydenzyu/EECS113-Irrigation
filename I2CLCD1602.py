@@ -31,31 +31,32 @@ def loop():
         sleep(1)
 		
 def display_temp_hum(tempurature, humidity):
-	mcp.output(3,1)     # turn on LCD backlight
+    mcp.output(3,1)     # turn on LCD backlight
     lcd.begin(16,2)     # set number of LCD lines and columns
-	lcd.setCursor(0,0)  # set cursor to first row
-	lcd.message( 'Tempurature: ' + temperature +'\n' )# display temperature
-	lcd.setCursor(0,1) # set cursor to second row
+    lcd.setCursor(0,0)  # set cursor to first row
+    lcd.message( 'Tempurature: ' + temperature +'\n' )# display temperature
+    lcd.setCursor(0,1) # set cursor to second row
     lcd.message( 'Humidity: ' + humidity + '\n' )   # display humidity
 	
 def display_cimis(temperature, humidity, local_ET, cimis_ET, water_saving, addi_water):
-	mcp.output(3,1)     # turn on LCD backlight
+    mcp.output(3,1)     # turn on LCD backlight
     lcd.begin(16,2)     # set number of LCD lines and columns
-	temperature_str = 'CIMIS Tempurature: ' + temperature + ' '
-	humidity_str = 'CIMIS Humidity: ' + humidity + ' '
-	local_ET_str = 'Local ET:' + local_ET + ' '
-	cimis_ET_str = 'CIMIST ET:' + cimis_ET + ' '
-	water_saving_str = 'Water Saved: ' + water_saving + ' '
-	addi_water_str = 'Additional Water Used: ' + addi_water + ' '
-	top_line = #concatenate strings for top line on LCD
-	bot_line = #concatenate strings for bottom line on LCD
-	while True:
-		lcd.setCursor(0,0)  # cursor top line
-		lcd.message(top_line[:16])# display top line
-		lcd.setCursor(0,1) # cursor bottom line
-		lcd.message(bot_line[:16])# display bottom line
-		top_line = top_line[1:]+top_line[0]# send first char to last 
-		bot_line = bot_line[1:]+bot_line[0]# send first char to last testing git
+    temperature_str = 'CIMIS Tempurature: ' + temperature + ' '
+    humidity_str = 'CIMIS Humidity: ' + humidity + ' '
+    local_ET_str = 'Local ET:' + local_ET + ' '
+    cimis_ET_str = 'CIMIS ET:' + cimis_ET + ' '
+    water_saving_str = 'Water Saved: ' + water_saving + ' '
+    addi_water_str = 'Additional Water Used: ' + addi_water + ' '
+    top_line = temperature_str + humidity_str #concatenate strings for top line on LCD
+    bot_line = local_ET_str + cimis_ET_str #concatenate strings for bottom line on LCD
+    while True:
+        lcd.setCursor(0,0)  # cursor top line
+        lcd.message(top_line[:16])# display top line
+        lcd.setCursor(0,1) # cursor bottom line
+        lcd.message(bot_line[:16])# display bottom line
+        top_line = top_line[1:]+top_line[0]# send first char to last 
+        bot_line = bot_line[1:]+bot_line[0]# send first char to last
+        sleep(0.5)
 		
 		
 def destroy():
@@ -65,20 +66,20 @@ PCF8574_address = 0x27  # I2C address of the PCF8574 chip.
 PCF8574A_address = 0x3F  # I2C address of the PCF8574A chip.
 # Create PCF8574 GPIO adapter.
 try:
-	mcp = PCF8574_GPIO(PCF8574_address)
+    mcp = PCF8574_GPIO(PCF8574_address)
 except:
-	try:
-		mcp = PCF8574_GPIO(PCF8574A_address)
-	except:
-		print ('I2C Address Error !')
-		exit(1)
+    try:
+        mcp = PCF8574_GPIO(PCF8574A_address)
+    except:
+        print ('I2C Address Error !')
+        exit(1)
 # Create LCD, passing in MCP GPIO adapter.
 lcd = Adafruit_CharLCD(pin_rs=0, pin_e=2, pins_db=[4,5,6,7], GPIO=mcp)
 
 if __name__ == '__main__':
     print ('Program is starting ... ')
     try:
-        loop()
+        display_cimis('0','0','0','0','0','0')
     except KeyboardInterrupt:
         destroy()
 
