@@ -50,15 +50,15 @@ def loop():
     count = 0                       # initialize minute count for an hour
 
     while(True):
-        dht.readDHT11()
-        # if the start of an hour, do not need to average 2 values
-        if (localHumidity[hour] == 0 and localTemp[hour] == 0):
-            localHumidity[hour] = dht.humidity
-            localTemp[hour] = dht.temperature
-        # otherwise avergae the new data with the past averages of the hour
-        else:
-            localHumidity[hour] = (localHumidity[hour] + dht.humidity)/2
-            localTemp[hour] = (localTemp[hour] + dht.temperature)/2
+        if (dht.readDHT11() is dht.DHTLIB_OK):
+            # if the start of an hour, do not need to average 2 values
+            if (localHumidity[hour] == 0 and localTemp[hour] == 0):
+                localHumidity[hour] = dht.humidity
+                localTemp[hour] = dht.temperature
+            # otherwise avergae the new data with the past averages of the hour
+            else:
+                localHumidity[hour] = (localHumidity[hour] + dht.humidity)/2
+                localTemp[hour] = (localTemp[hour] + dht.temperature)/2
         
         count += 1
         # check CIMIS for new data
