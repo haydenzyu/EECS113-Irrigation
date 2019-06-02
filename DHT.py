@@ -12,18 +12,21 @@ pf = 1.0            # plant factor for lawn
 conversion = 0.62   # constant conversion factor
 IE = 0.75           # irrigation efficiency (suggested to use 0.75)
 systemRate = 17     # 17 gallons per minute = 1020 gallons per hour
+ET0 = 0
+cimisHumidity = [0, 0, 0]
+cimisTemp = [0, 0, 0]
+cimisET = [0, 0, 0]
 
 def getIrrigationTime():
     global irrigationTime
-
+    global ETO
     # get ET, humidity, and temp from CIMIS
-    cimisHumidity = [76, 71, 65]
-    cimisTemp = [61.3, 63.8, 66.8]
-    cimisET = [0.01, 0.02, 0.03]
+    #cimisHumidity = [76, 71, 65]
+    #cimisTemp = [61.3, 63.8, 66.8]
+    #cimisET = [0.01, 0.02, 0.03]
 
     # get humidty and temp derating factors 
     # get ET0 for the 3 hours using these factors and CIMIS ET
-    ET0 = 0
     for i in range(0, 2):
         humidityDerate = localHumidity[i] / cimisHumidity[i]
         tempDerate = localTemp[i] / cimisTemp[i]
@@ -45,12 +48,17 @@ def getIrrigationTime():
 
 def loop():
     global hour
+    global localHumidity
+    global localTemp
 
     dht = DHT.DHT(thermoPin)        # creates DHT class object
     count = 0                       # initialize minute count for an hour
 
     while(True):
-        if (dht.readDHT11() is dht.DHTLIB_OK):
+        chk = dht.readDHT11()
+        print("Check DHT: ", chk)
+
+        if (chk is dht.DHTLIB_OK):
             # if the start of an hour, do not need to average 2 values
             if (localHumidity[hour] == 0 and localTemp[hour] == 0):
                 localHumidity[hour] = dht.humidity
