@@ -3,8 +3,8 @@ import RPi.GPIO as GPIO
 import Freenove_DHT as DHT
 
 thermoPin = 11
-localHumidity = [0,0,0]
-localTemp = [0,0,0]
+localHumidity = [0.0,0.0,0.0]
+localTemp = [0.0,0.0,0.0]
 hour = 0
 irrigationTime = 0.0
 sqft = 200          # 200 square feet to be irrigated
@@ -50,6 +50,7 @@ def loop():
     count = 0                       # initialize minute count for an hour
 
     while(True):
+        dht.readDHT11()
         # if the start of an hour, do not need to average 2 values
         if (localHumidity[hour] == 0 and localTemp[hour] == 0):
             localHumidity[hour] = dht.humidity
