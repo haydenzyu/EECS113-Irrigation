@@ -55,7 +55,7 @@ def display_cimis(temperature, humidity, local_ET, cimis_ET, water_saving, addi_
 		lcd.setCursor(0,1) # cursor bottom line
 		lcd.message(bot_line[:16])# display bottom line
 		top_line = top_line[1:]+top_line[0]# send first char to last 
-		bot_line = bot_line[1:]+bot_line[0]# send first char to last
+		bot_line = bot_line[1:]+bot_line[0]# send first char to last testing git
 		
 		
 def destroy():
