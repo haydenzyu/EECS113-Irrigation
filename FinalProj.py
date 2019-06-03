@@ -11,7 +11,8 @@ import DHT
 import LCD
 
 thermoPin = 11  # pin for the thermo sensor
-sensorPin = 13  # pin for the motion sensor
+ledPin = 12     # pin for motion LED
+sensorPin = 16  # pin for the motion sensor
 relayPin = 15
 
 def setup():
@@ -19,7 +20,7 @@ def setup():
     GPIO.setmode(GPIO.BOARD)
     GPIO.setwarnings(False)
     GPIO.setup(sensorPin, GPIO.IN)
-    GPIO.setup(relayPin, GPIO.OUT)
+    GPIO.setup([relayPin, ledPin], GPIO.OUT)
 
 def loop():
     t_DHT = None

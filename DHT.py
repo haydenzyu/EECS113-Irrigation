@@ -1,3 +1,4 @@
+import threading
 import time
 import RPi.GPIO as GPIO
 import Freenove_DHT as DHT
@@ -46,6 +47,11 @@ def getIrrigationTime():
 
     # signal relay to turn on
     Relay.systemState = True
+    t = None
+    print("starting Relay/Motor thread")
+    t = threading.Thread(target=Relay.loop)
+    t.daemon = True
+    t.start()
 
 
 def loop():
