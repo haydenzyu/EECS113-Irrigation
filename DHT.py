@@ -21,7 +21,7 @@ cimisET = [0, 0, 0]
 
 def getIrrigationTime():
     global irrigationTime
-    global ETO
+    global ET0
     # get ET, humidity, and temp from CIMIS
     #cimisHumidity = [76, 71, 65]
     #cimisTemp = [61.3, 63.8, 66.8]
