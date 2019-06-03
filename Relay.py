@@ -11,7 +11,7 @@ systemState = False     # system initialized to off
 def loop():
     global systemState
 
-    runTime = DHT.irrigationTime*60
+    runTime = 60 #DHT.irrigationTime*60
     
     t = None
     print("starting PIR thread")
@@ -27,9 +27,12 @@ def loop():
 
     GPIO.output(relayPin, GPIO.HIGH)
     # loop to keep irrigation on
+    print("Start irrigating")
     while (True):
         # if the motion sensor triggered, pause system run
         if (PIR.senvar == 1):
+            print("Pause irrigation")
+            GPIO.output(relayPin, GPIO.LOW)
             # loop to wait 1 min or until motion no longer detected
             pauseStart = time.time()
 
@@ -46,6 +49,7 @@ def loop():
                 runTime += 1
                 #offTime = offTime - 1
                 time.sleep(1)
+            print("Resume Irrigation")
 
         # if irrigation pause over a minute, resume irrigating
         if ((time.time()-start) > runTime):
@@ -55,11 +59,11 @@ def loop():
         time.sleep(1)        
 
         #time.sleep(offTime)
+    print("Stop irrigation")
 
 thermoPin = 11  # pin for the thermo sensor
 ledPin = 12     # pin for motion LED
 sensorPin = 16  # pin for the motion sensor
-relayPin = 15
 
 def setup():
     # setup the board input and output pins
@@ -74,7 +78,7 @@ def destroy():
 
 # main function to start program
 if __name__ == '__main__':
-    global systemState
+    #global systemState
     print("Program starting...")
     setup()
     try:

@@ -19,6 +19,8 @@ cimisHumidity = [0, 0, 0]
 cimisTemp = [0, 0, 0]
 cimisET = [0, 0, 0]
 
+display = False
+
 def getIrrigationTime():
     global irrigationTime
     global ET0
@@ -58,6 +60,7 @@ def loop():
     global hour
     global localHumidity
     global localTemp
+    global display
 
     dht = DHT.DHT(thermoPin)        # creates DHT class object
     count = 0                       # initialize minute count for an hour
@@ -95,5 +98,8 @@ def loop():
             count = 0
             hour = (hour + 1) % 3
 
+        display = True #enable LCD to display
         # sleep for 1 minute
         time.sleep(60)
+        display = False #disable LCD to display
+        time.sleep(0.1)#buffer time

@@ -36,11 +36,8 @@ def loop():
    # t_relay.start()
     print("starting LCD Thread")
     t_LCD = threading.Thread(target=LCD.display_cimis)
-            #args=(DHT.localTemp[DHT.hour], DHT.localHumidity[DHT.hour], DHT.ET0, 
-             #   DHT.cimisHumidity[DHT.hour], DHT.cimisTemp[DHT.hour], DHT.cimisET[DHT.hour], 0, 0))
     t_LCD.daemon = True
     t_LCD.start()
-    # DHT.loop()
     while(True):
         # if (DHT.irrigationTime != 0):
         #    print("Irrigation Time: %f", DHT.irrigationTime)

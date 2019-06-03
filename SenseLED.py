@@ -11,15 +11,17 @@ def setup():
     GPIO.setup(sensorPin, GPIO.IN)
 
 def loop():
+    global senvar
+
     while True:
         if GPIO.input(sensorPin) == GPIO.HIGH:
             GPIO.output(ledPin, GPIO.HIGH)
             senvar = 1
-            print(senvar)
+            #print(senvar)
         else:
             GPIO.output(ledPin, GPIO.LOW)
             senvar = 0
-            print(senvar)
+            #print(senvar)
 
 def destroy():
     GPIO.cleanup()

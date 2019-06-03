@@ -31,22 +31,15 @@ def loop():
         lcd.setCursor(0,0)  # set cursor position
         #lcd.message( 'CPU: ' + get_cpu_temp()+'\n' )# display CPU temperature
         lcd.message( get_time_now() )   # display the time
-        sleep(1)
-		
-def display_temp_hum(tempurature, humidity):
-    mcp.output(3,1)     # turn on LCD backlight
-    lcd.begin(16,2)     # set number of LCD lines and columns
-    lcd.setCursor(0,0)  # set cursor to first row
-    lcd.message( 'Tempurature: ' + temperature +'\n' )# display temperature
-    lcd.setCursor(0,1) # set cursor to second row
-    lcd.message( 'Humidity: ' + humidity + '\n' )   # display humidity
+        sleep(1)	
 	
 def display_cimis():#local_temp, local_hum, c_temp, c_hum, local_ET, cimis_ET, water_saving, addi_water):
     mcp.output(3,1)     # turn on LCD backlight
     lcd.begin(16,2)     # set number of LCD lines and columns
-    sleep(1)
+    sleep(0.5) #wait for DHT thread to start
     while True:
-        print(DHT.localTemp[DHT.hour])
+        #create strings for the variables
+        #print(DHT.localTemp[DHT.hour])
         local_temp_str = 'Local Temperature: ' + str(DHT.localTemp[DHT.hour]) + ' '
         local_hum_str = 'Local Humidity: ' + str(DHT.localHumidity[DHT.hour]) + ' '
         c_temp_str = 'CIMIS Tempurature: ' + str(DHT.cimisTemp[DHT.hour]) + ' '
@@ -57,16 +50,16 @@ def display_cimis():#local_temp, local_hum, c_temp, c_hum, local_ET, cimis_ET, w
         addi_water_str = 'Additional Water Used: ' + str(0) + ' '
         top_line = local_temp_str + local_hum_str #concatenate strings for top line on LCD
         bot_line = c_temp_str + c_hum_str + local_ET_str + cimis_ET_str + water_saving_str + addi_water_str #concatenate strings for bottom line on LCD
-        cnt = 120
-        while cnt:
+        #end of create strings
+        #print(DHT.display)
+        while DHT.display:
             lcd.setCursor(0,0) # cursor top line
             lcd.message(top_line[:16])
             lcd.setCursor(0,1) # cursor bottom line
             lcd.message(bot_line[:16])# display bottom line
             top_line = top_line[1:]+top_line[0]# send first char to last 
             bot_line = bot_line[1:]+bot_line[0]# send first char to last
-            cnt -= 1
-            sleep(0.2)
+            sleep(0.1)
 		
 		
 def destroy():
