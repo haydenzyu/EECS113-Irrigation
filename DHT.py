@@ -119,7 +119,7 @@ def loop():
         count += 1
         # check CIMIS for new data
         # if there is new data for the hour
-        if (count >= 3 and hour == 2):
+        if (count >= 3):
             getIrrigationTime()
 
             # clear the past 3 hours of data
@@ -140,4 +140,4 @@ def loop():
 
         if (count >= 3):
             count = 0
-            hour = (hour + 1) % 3
+            #hour = (hour + 1) % 3
