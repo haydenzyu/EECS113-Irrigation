@@ -1,3 +1,12 @@
+#!/usr/bin/env python3
+########################################################################
+# Filename    : DHT.py
+# Description : Use the DHT to get local humidity and temperature data
+#               Use this data to calculate irrigation time
+# Author      : Sienna Ballot
+# modification: 6/3/19
+########################################################################
+
 import threading
 import time
 import RPi.GPIO as GPIO
@@ -118,9 +127,13 @@ def loop():
                 localTemp = (localTemp + (32+(1.8*dht.temperature)))/2
         
         count += 1
+        print("Local Humidity: ", localHumidity)
+        print("Local Temperature: ", localTemp)
+        display = True #enable LCD to display
+        
         # check CIMIS for new data
         # if there is new data for the hour
-        if (count >= 5):
+        if (count >= 10):
             getIrrigationTime()
 
             # clear the past 3 hours of data
@@ -129,16 +142,12 @@ def loop():
             #     localTemp[i] = 0
             localHumidity = 0
             localTemp = 0
-
-        print("Local Humidity: ", localHumidity)
-        print("Local Temperature: ", localTemp)
         
-        display = True #enable LCD to display
         # sleep for 1 minute
-        time.sleep(20)
+        time.sleep(30)
         display = False #disable LCD to display
         time.sleep(0.6)
 
-        if (count >= 5):
+        if (count >= 10):
             count = 0
             #hour = (hour + 1) % 3

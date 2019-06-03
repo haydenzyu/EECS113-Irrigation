@@ -1,3 +1,12 @@
+#!/usr/bin/env python3
+########################################################################
+# Filename    : Relay.py
+# Description : Use the data from DHT and CIMIS to activate relay switch 
+#               and turn on motor 
+# Author      : Sienna Ballot
+# modification: 6/3/19
+########################################################################
+
 import threading
 import time
 import RPi.GPIO as GPIO

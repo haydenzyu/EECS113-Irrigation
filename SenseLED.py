@@ -1,4 +1,5 @@
 import RPi.GPIO as GPIO
+import time
 
 ledPin = 12
 sensorPin = 16
@@ -14,15 +15,17 @@ def loop():
     global senvar
 
     while True:
-        if GPIO.input(sensorPin) == GPIO.HIGH:
+        i = GPIO.input(sensorPin)
+        if i == GPIO.HIGH:
             GPIO.output(ledPin, GPIO.HIGH)
             senvar = 1
             #print(senvar)
-        else:
+        elif i == GPIO.LOW:
             GPIO.output(ledPin, GPIO.LOW)
             senvar = 0
             #print(senvar)
         #print(senvar)
+        time.sleep(0.1)
 
 def destroy():
     GPIO.cleanup()
