@@ -133,7 +133,8 @@ def loop():
         
         # check CIMIS for new data
         # if there is new data for the hour
-        if (count >= 10):
+        result = time.localtime(time.time())
+        if (count >= 60 or result.tm_min == 59):
             getIrrigationTime()
 
             # clear the past 3 hours of data
@@ -142,12 +143,13 @@ def loop():
             #     localTemp[i] = 0
             localHumidity = 0
             localTemp = 0
+            count = 0
         
         # sleep for 1 minute
-        time.sleep(30)
+        time.sleep(60)
         display = False #disable LCD to display
         time.sleep(0.6)
 
-        if (count >= 10):
-            count = 0
+        # if (count >= 60):
+        #     count = 0
             #hour = (hour + 1) % 3
