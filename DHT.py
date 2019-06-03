@@ -53,7 +53,8 @@ def getIrrigationTime():
     print("Gallons Needed: ", gallons)
 
     # get time to run irrigation in minutes
-    irrigationTime = (gallons/60) / systemRate
+    # gallons needed / (gallons per min)
+    irrigationTime = gallons / systemRate
     print("Irrigation Time: ", irrigationTime)
 
     # signal relay to turn on
@@ -118,7 +119,7 @@ def loop():
         count += 1
         # check CIMIS for new data
         # if there is new data for the hour
-        if (count == 1 and hour == 2):
+        if (count >= 3 and hour == 2):
             getIrrigationTime()
 
             # clear the past 3 hours of data
