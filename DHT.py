@@ -53,7 +53,7 @@ def getIrrigationTime():
     print("Gallons Needed: ", gallons)
 
     # get time to run irrigation in minutes
-    irrigationTime = gallons / systemRate
+    irrigationTime = (gallons/60) / systemRate
     print("Irrigation Time: ", irrigationTime)
 
     # signal relay to turn on
