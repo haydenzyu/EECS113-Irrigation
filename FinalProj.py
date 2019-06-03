@@ -7,7 +7,8 @@ import RPi.GPIO as GPIO
 import time
 from datetime import datetime
 import DHT
-import Relay
+#import Relay
+import LCD
 
 thermoPin = 11  # pin for the thermo sensor
 sensorPin = 13  # pin for the motion sensor
@@ -27,15 +28,22 @@ def loop():
     t_DHT.daemon = True
     t_DHT.start()
     t_relay = None
-    print("starting DHT thread")
-    t_relay = threading.Thread(target=Relay.loop)
-    t_relay.daemon = True
-    t_relay.start()
+   # print("starting Relay thread")
+   # t_relay = threading.Thread(target=Relay.loop)
+   # t_relay.daemon = True
+   # t_relay.start()
+    print("starting LCD Thread")
+    t_LCD = threading.Thread(target=LCD.display_cimis)
+            #args=(DHT.localTemp[DHT.hour], DHT.localHumidity[DHT.hour], DHT.ET0, 
+             #   DHT.cimisHumidity[DHT.hour], DHT.cimisTemp[DHT.hour], DHT.cimisET[DHT.hour], 0, 0))
+    t_LCD.daemon = True
+    t_LCD.start()
     # DHT.loop()
     while(True):
         # if (DHT.irrigationTime != 0):
         #    print("Irrigation Time: %f", DHT.irrigationTime)
-        time.sleep(10)
+        #print(DHT.localTemp[DHT.hour])
+        time.sleep(0.1)
 
 def destroy():
     GPIO.output(relayPin, GPIO.LOW)
@@ -48,5 +56,6 @@ if __name__ == '__main__':
     try:
         loop()
     except KeyboardInterrupt:
+        LCD.destroy()
         destroy()
         exit()
