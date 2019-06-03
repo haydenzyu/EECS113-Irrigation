@@ -66,20 +66,21 @@ def getIrrigationTime():
     t.start()
 
     # open file to write information
-
-    row = ['Local ET0', 'Local Humidity', 'Local Temp (F)', 'CIMIS ET0', 'CIMIS Humidity', 'CIMIS Temp (F)']
-    row2 = [str(ET0), str(localHumidity), str(localTemp), str(cimisET), str(cimisHumidity), str(cimisTemp)]
+    result = time.localtime(time.time())
+    date = str(result.tm_mon)+'/'+str(result.tm_mday)+'/'+str(result.tm_year)+str()
+    t = str(result.tm_hour)+':'+str(result.tm_min)+'.'+str(result.tm_min)
+    row = ['Date', 'Time', 'Local ET0', 'Local Humidity', 'Local Temp (F)', 'CIMIS ET0', 'CIMIS Humidity', 'CIMIS Temp (F)']
+    row2 = [date, t, str(ET0), str(localHumidity), str(localTemp), str(cimisET), str(cimisHumidity), str(cimisTemp)]
     row3 = ['Gallons Needed (gal/hr)', 'Time Needed (min)']
     row4 = [str(gallons), str(irrigationTime)]
 
     with open('output.csv', mode='a') as outputFile:
         outputWriter = csv.writer(outputFile)
-        outputWriter.writerow(time.ctime(time.time()))
+        #outputWriter.writerow(time.ctime(time.time()))
         outputWriter.writerow(row)
         outputWriter.writerow(row2)
         outputWriter.writerow(row3)
         outputWriter.writerow(row4)
-
 
     outputFile.close()
 
@@ -119,7 +120,7 @@ def loop():
         count += 1
         # check CIMIS for new data
         # if there is new data for the hour
-        if (count >= 3):
+        if (count >= 5):
             getIrrigationTime()
 
             # clear the past 3 hours of data
@@ -134,10 +135,10 @@ def loop():
         
         display = True #enable LCD to display
         # sleep for 1 minute
-        time.sleep(10)
+        time.sleep(20)
         display = False #disable LCD to display
         time.sleep(0.6)
 
-        if (count >= 3):
+        if (count >= 5):
             count = 0
             #hour = (hour + 1) % 3
