@@ -41,7 +41,7 @@ def display_cimis():#local_temp, local_hum, c_temp, c_hum, local_ET, cimis_ET, w
     sleep(1) #wait for DHT thread to start
     while True:
 #Create strings for the variables
-        #print(DHT.localTemp[DHT.hour])
+        print(Relay.ouput)
         if(Relay.output==False):
             mode = 'On'
         else:
@@ -55,7 +55,7 @@ def display_cimis():#local_temp, local_hum, c_temp, c_hum, local_ET, cimis_ET, w
         cimis_ET_str = 'CIMIS ET:' + str(DHT.cimisET) + ' '
         water_saving_str = 'Water Saved: ' + str(0) + ' '
         addi_water_str = 'Additional Water Used: ' + str(0) + ' '
-        #print(DHT.hour)
+        print(DHT.display)
         top_line = relay_str + local_temp_str + local_hum_str #concatenate strings for top line on LCD
         if(DHT.hour>0):
             bot_line = c_temp_str + c_hum_str + local_ET_str + cimis_ET_str + water_saving_str + addi_water_str #concatenate strings for bottom line on LCD
