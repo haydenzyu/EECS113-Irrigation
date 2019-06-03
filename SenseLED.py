@@ -22,6 +22,7 @@ def loop():
             GPIO.output(ledPin, GPIO.LOW)
             senvar = 0
             #print(senvar)
+        #print(senvar)
 
 def destroy():
     GPIO.cleanup()

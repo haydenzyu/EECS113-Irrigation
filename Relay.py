@@ -4,14 +4,18 @@ import RPi.GPIO as GPIO
 import DHT
 import SenseLED as PIR
 
-relayPin = 15
-
-systemState = False     # system initialized to off
+thermoPin = 11
+ledPin = 12
+sensorPin = 16
+relayPin = 7
+output = False
+#systemState = False     # system initialized to off
 
 def loop():
-    global systemState
+    global output
+    #global systemState
 
-    runTime = 60 #DHT.irrigationTime*60
+    runTime = DHT.irrigationTime*60
     
     t = None
     print("starting PIR thread")
@@ -25,52 +29,74 @@ def loop():
     #    if (systemState):
     start = time.time()     # get the start time of irrigation
 
-    GPIO.output(relayPin, GPIO.HIGH)
+    output = False
+    #while(True):
+    #    GPIO.output(relayPin, output)
+
+    #    output = not output
+        
+    #    if output:
+    #        print("True")
+    #    else:
+    #        print("False")
+        
+        #if output == GPIO.LOW:
+        #    output = GPIO.HIGH
+        #    print("high")
+        
+        #elif output == GPIO.HIGH:
+        #    output = GPIO.LOW
+        #    print("low")
+        
+    #    time.sleep(5)
+
+    GPIO.output(relayPin, output)
     # loop to keep irrigation on
     print("Start irrigating")
     while (True):
         # if the motion sensor triggered, pause system run
         if (PIR.senvar == 1):
             print("Pause irrigation")
-            GPIO.output(relayPin, GPIO.LOW)
+            output = True
+            GPIO.output(relayPin, True)
             # loop to wait 1 min or until motion no longer detected
             pauseStart = time.time()
 
             while(True):
                 # break loop and resume irrigation if 1 min exceeded
                 if ((time.time()-pauseStart) > 60):
-                    GPIO.output(relayPin, GPIO.HIGH)
+                    output = False
+                    GPIO.output(relayPin, False)
                     break
                 # resume irrigation if motion no longer detected
                 if (PIR.senvar == 0):
-                    GPIO.output(relayPin, GPIO.HIGH)
+                    otuput = False
+                    GPIO.output(relayPin, False)
                     break
 
                 runTime += 1
                 #offTime = offTime - 1
-                time.sleep(1)
+                time.sleep(0.5)
             print("Resume Irrigation")
 
         # if irrigation pause over a minute, resume irrigating
         if ((time.time()-start) > runTime):
-            GPIO.output(relayPin, GPIO.LOW)
+            output = True
+            GPIO.output(relayPin, True)
             break
         
-        time.sleep(1)        
+        time.sleep(0.5)        
 
         #time.sleep(offTime)
     print("Stop irrigation")
-
-thermoPin = 11  # pin for the thermo sensor
-ledPin = 12     # pin for motion LED
-sensorPin = 16  # pin for the motion sensor
 
 def setup():
     # setup the board input and output pins
     GPIO.setmode(GPIO.BOARD)
     GPIO.setwarnings(False)
     GPIO.setup(sensorPin, GPIO.IN)
-    GPIO.setup([relayPin, ledPin], GPIO.OUT)
+    GPIO.setup(relayPin, GPIO.OUT)
+    GPIO.setup(ledPin, GPIO.OUT)
 
 def destroy():
     GPIO.output([relayPin, ledPin], GPIO.LOW)
@@ -78,7 +104,7 @@ def destroy():
 
 # main function to start program
 if __name__ == '__main__':
-    #global systemState
+    global systemState
     print("Program starting...")
     setup()
     try:

@@ -12,6 +12,7 @@ from time import sleep, strftime
 from datetime import datetime
 import threading
 import DHT
+import Relay
  
 def get_cpu_temp():     # get CPU temperature and store it into file "/sys/class/thermal/thermal_zone0/temp"
     tmp = open('/sys/class/thermal/thermal_zone0/temp')
@@ -36,30 +37,44 @@ def loop():
 def display_cimis():#local_temp, local_hum, c_temp, c_hum, local_ET, cimis_ET, water_saving, addi_water):
     mcp.output(3,1)     # turn on LCD backlight
     lcd.begin(16,2)     # set number of LCD lines and columns
-    sleep(0.5) #wait for DHT thread to start
+    mode = None
+    sleep(1) #wait for DHT thread to start
     while True:
-        #create strings for the variables
+#Create strings for the variables
         #print(DHT.localTemp[DHT.hour])
-        local_temp_str = 'Local Temperature: ' + str(DHT.localTemp[DHT.hour]) + ' '
+        if(Relay.output==False):
+            mode = 'On'
+        else:
+            mode = 'Off'
+        relay_str = 'Water: ' + mode + ' '
+        local_temp_str = 'Local Temp: ' + str(DHT.localTemp[DHT.hour]) + ' '
         local_hum_str = 'Local Humidity: ' + str(DHT.localHumidity[DHT.hour]) + ' '
-        c_temp_str = 'CIMIS Tempurature: ' + str(DHT.cimisTemp[DHT.hour]) + ' '
+        c_temp_str = 'CIMIS Temp: ' + str(DHT.cimisTemp[DHT.hour]) + ' '
         c_hum_str = 'CIMIS Humidity: ' + str(DHT.cimisHumidity[DHT.hour]) + ' '
         local_ET_str = 'Local ET:' + str(DHT.ET0) + ' '
         cimis_ET_str = 'CIMIS ET:' + str(DHT.cimisET[DHT.hour]) + ' '
         water_saving_str = 'Water Saved: ' + str(0) + ' '
         addi_water_str = 'Additional Water Used: ' + str(0) + ' '
-        top_line = local_temp_str + local_hum_str #concatenate strings for top line on LCD
-        bot_line = c_temp_str + c_hum_str + local_ET_str + cimis_ET_str + water_saving_str + addi_water_str #concatenate strings for bottom line on LCD
-        #end of create strings
+        #print(DHT.hour)
+        top_line = relay_str + local_temp_str + local_hum_str #concatenate strings for top line on LCD
+        if(DHT.hour>0):
+            bot_line = c_temp_str + c_hum_str + local_ET_str + cimis_ET_str + water_saving_str + addi_water_str #concatenate strings for bottom line on LCD
+            while DHT.display:
+                lcd.setCursor(0,0) # cursor top line
+                lcd.message(top_line[:16])
+                lcd.setCursor(0,1) # cursor bottom line
+                lcd.message(bot_line[:16])# display bottom line
+                top_line = top_line[1:]+top_line[0]# send first char to last 
+                bot_line = bot_line[1:]+bot_line[0]# send first char to last
+                sleep(0.1)
+        else:
+            while DHT.display:
+                lcd.setCursor(0,0) # cursor top line
+                lcd.message(top_line[:16])
+                top_line = top_line[1:]+top_line[0]# send first char to last 
+                sleep(0.1)
+#end of create strings
         #print(DHT.display)
-        while DHT.display:
-            lcd.setCursor(0,0) # cursor top line
-            lcd.message(top_line[:16])
-            lcd.setCursor(0,1) # cursor bottom line
-            lcd.message(bot_line[:16])# display bottom line
-            top_line = top_line[1:]+top_line[0]# send first char to last 
-            bot_line = bot_line[1:]+bot_line[0]# send first char to last
-            sleep(0.1)
 		
 		
 def destroy():

@@ -25,9 +25,9 @@ def getIrrigationTime():
     global irrigationTime
     global ET0
     # get ET, humidity, and temp from CIMIS
-    #cimisHumidity = [76, 71, 65]
-    #cimisTemp = [61.3, 63.8, 66.8]
-    #cimisET = [0.01, 0.02, 0.03]
+    cimisHumidity = [76, 71, 65]
+    cimisTemp = [61.3, 63.8, 66.8]
+    cimisET = [0.01, 0.02, 0.03]
 
     # get humidty and temp derating factors 
     # get ET0 for the 3 hours using these factors and CIMIS ET
@@ -82,7 +82,7 @@ def loop():
         count += 1
         # check CIMIS for new data
         # if there is new data for the hour
-        if (count == 60 and hour == 2):
+        if (count == 1 and hour == 2):
             getIrrigationTime()
 
             # clear the past 3 hours of data
@@ -93,13 +93,12 @@ def loop():
         print("Local Humidity: ", localHumidity[hour])
         print("Local Temperature: ", localTemp[hour])
         
-        # if 60 values have been averagde, reset to next hour
-        if (count >= 60):
-            count = 0
-            hour = (hour + 1) % 3
-
         display = True #enable LCD to display
         # sleep for 1 minute
-        time.sleep(60)
+        time.sleep(10)
         display = False #disable LCD to display
-        time.sleep(0.1)#buffer time
+        time.sleep(0.6)
+
+        if (count >= 1):
+            count = 0
+            hour = (hour + 1) % 3
