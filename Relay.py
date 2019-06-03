@@ -17,7 +17,7 @@ thermoPin = 11
 ledPin = 12
 sensorPin = 16
 relayPin = 7
-output = False          # system initialized to false
+output = True          # system initialized to false
 
 def loop():
     global output
