@@ -1,6 +1,7 @@
 import time
 import RPi.GPIO as GPIO
 import Freenove_DHT as DHT
+import Relay
 
 thermoPin = 11
 localHumidity = [0.0,0.0,0.0]
@@ -41,6 +42,7 @@ def getIrrigationTime():
     print("Irrigation Time: ", irrigationTime)
 
     # signal relay to turn on
+    Relay.systemState = True
 
 
 def loop():
