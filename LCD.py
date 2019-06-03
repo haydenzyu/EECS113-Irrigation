@@ -47,12 +47,12 @@ def display_cimis():#local_temp, local_hum, c_temp, c_hum, local_ET, cimis_ET, w
         else:
             mode = 'Off'
         relay_str = 'Water: ' + mode + ' '
-        local_temp_str = 'Local Temp: ' + str(DHT.localTemp[DHT.hour]) + ' '
-        local_hum_str = 'Local Humidity: ' + str(DHT.localHumidity[DHT.hour]) + ' '
-        c_temp_str = 'CIMIS Temp: ' + str(DHT.cimisTemp[DHT.hour]) + ' '
-        c_hum_str = 'CIMIS Humidity: ' + str(DHT.cimisHumidity[DHT.hour]) + ' '
+        local_temp_str = 'Local Temp: ' + str(DHT.localTemp) + ' '
+        local_hum_str = 'Local Humidity: ' + str(DHT.localHumidity) + ' '
+        c_temp_str = 'CIMIS Temp: ' + str(DHT.cimisTemp) + ' '
+        c_hum_str = 'CIMIS Humidity: ' + str(DHT.cimisHumidity) + ' '
         local_ET_str = 'Local ET:' + str(DHT.ET0) + ' '
-        cimis_ET_str = 'CIMIS ET:' + str(DHT.cimisET[DHT.hour]) + ' '
+        cimis_ET_str = 'CIMIS ET:' + str(DHT.cimisET) + ' '
         water_saving_str = 'Water Saved: ' + str(0) + ' '
         addi_water_str = 'Additional Water Used: ' + str(0) + ' '
         #print(DHT.hour)

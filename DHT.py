@@ -137,6 +137,6 @@ def loop():
         display = False #disable LCD to display
         time.sleep(0.6)
 
-        if (count >= 1):
+        if (count >= 3):
             count = 0
             hour = (hour + 1) % 3
