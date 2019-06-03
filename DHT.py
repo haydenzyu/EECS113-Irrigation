@@ -1,3 +1,4 @@
+import threading
 import time
 import RPi.GPIO as GPIO
 import Freenove_DHT as DHT
@@ -20,7 +21,7 @@ cimisET = [0, 0, 0]
 
 def getIrrigationTime():
     global irrigationTime
-    global ETO
+    global ET0
     # get ET, humidity, and temp from CIMIS
     #cimisHumidity = [76, 71, 65]
     #cimisTemp = [61.3, 63.8, 66.8]
@@ -46,6 +47,11 @@ def getIrrigationTime():
 
     # signal relay to turn on
     Relay.systemState = True
+    t = None
+    print("starting Relay/Motor thread")
+    t = threading.Thread(target=Relay.loop)
+    t.daemon = True
+    t.start()
 
 
 def loop():
