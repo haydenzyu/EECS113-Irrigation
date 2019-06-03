@@ -73,7 +73,8 @@ def display_cimis():#local_temp, local_hum, c_temp, c_hum, local_ET, cimis_ET, w
                 lcd.message(top_line[:16])
                 top_line = top_line[1:]+top_line[0]# send first char to last 
                 sleep(0.1)
-		sleep(1) #DHT time buffer
+                
+        sleep(1) #DHT time buffer
 #end of create strings
 		
 		
