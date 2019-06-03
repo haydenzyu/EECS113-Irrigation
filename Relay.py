@@ -8,12 +8,10 @@ thermoPin = 11
 ledPin = 12
 sensorPin = 16
 relayPin = 7
-output = False
-#systemState = False     # system initialized to off
+output = False          # system initialized to false
 
 def loop():
     global output
-    #global systemState
 
     runTime = DHT.irrigationTime*60
     
@@ -23,34 +21,12 @@ def loop():
     t.daemon = True
     t.start()
 
-    #while(True):
-    #    offTime = 60*(60 - DHT.irrigationTime)
-        
-    #    if (systemState):
     start = time.time()     # get the start time of irrigation
 
     output = False
-    #while(True):
-    #    GPIO.output(relayPin, output)
-
-    #    output = not output
-        
-    #    if output:
-    #        print("True")
-    #    else:
-    #        print("False")
-        
-        #if output == GPIO.LOW:
-        #    output = GPIO.HIGH
-        #    print("high")
-        
-        #elif output == GPIO.HIGH:
-        #    output = GPIO.LOW
-        #    print("low")
-        
-    #    time.sleep(5)
 
     GPIO.output(relayPin, output)
+
     # loop to keep irrigation on
     print("Start irrigating")
     while (True):
@@ -70,7 +46,7 @@ def loop():
                     break
                 # resume irrigation if motion no longer detected
                 if (PIR.senvar == 0):
-                    otuput = False
+                    output = False
                     GPIO.output(relayPin, False)
                     break
 
@@ -87,7 +63,6 @@ def loop():
         
         time.sleep(0.5)        
 
-        #time.sleep(offTime)
     print("Stop irrigation")
 
 def setup():
