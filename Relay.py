@@ -56,5 +56,30 @@ def loop():
 
         #time.sleep(offTime)
 
-        
+thermoPin = 11  # pin for the thermo sensor
+ledPin = 12     # pin for motion LED
+sensorPin = 16  # pin for the motion sensor
+relayPin = 15
 
+def setup():
+    # setup the board input and output pins
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setwarnings(False)
+    GPIO.setup(sensorPin, GPIO.IN)
+    GPIO.setup([relayPin, ledPin], GPIO.OUT)
+
+def destroy():
+    GPIO.output([relayPin, ledPin], GPIO.LOW)
+    GPIO.cleanup()
+
+# main function to start program
+if __name__ == '__main__':
+    global systemState
+    print("Program starting...")
+    setup()
+    try:
+        systemState = True
+        loop()
+    except KeyboardInterrupt:
+        destroy()
+        exit()
