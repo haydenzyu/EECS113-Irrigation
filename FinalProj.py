@@ -9,6 +9,7 @@ from datetime import datetime
 import DHT
 #import Relay
 import LCD
+import SenseLED
 
 thermoPin = 11  # pin for the thermo sensor
 sensorPin = 13  # pin for the motion sensor
