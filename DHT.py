@@ -16,9 +16,9 @@ conversion = 0.62   # constant conversion factor
 IE = 0.75           # irrigation efficiency (suggested to use 0.75)
 systemRate = 17     # 17 gallons per minute = 1020 gallons per hour
 ET0 = 0
-cimisHumidity 
-cimisTemp 
-cimisET
+cimisHumidity = 0
+cimisTemp = 0
+cimisET = 0
 
 display = False
 
