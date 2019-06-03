@@ -41,7 +41,7 @@ def display_cimis():#local_temp, local_hum, c_temp, c_hum, local_ET, cimis_ET, w
     sleep(1) #wait for DHT thread to start
     while True:
 #Create strings for the variables
-        print(Relay.ouput)
+        print(Relay.output)
         if(Relay.output==False):
             mode = 'On'
         else:
