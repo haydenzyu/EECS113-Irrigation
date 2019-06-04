@@ -1,7 +1,7 @@
 Authors: 
-Sienna Ballot
-Hayden Yu
-Tong Huang
+Sienna Ballot,
+Hayden Yu,
+Tong Huang,
 Isaac Bates
 
 Date:
