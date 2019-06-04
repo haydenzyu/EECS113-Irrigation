@@ -1,8 +1,6 @@
 import requests
 import datetime
 import csv
-#from bs4 import BeautifulSoup
-import simplejson as json
 import pprint
 import DHT
 
