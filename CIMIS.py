@@ -1,7 +1,7 @@
 import requests
 import datetime
 import csv
-from bs4 import BeautifulSoup
+#from bs4 import BeautifulSoup
 import simplejson as json
 import pprint
 #from cimis import run_cimis, retrieve_cimis_station_info, write_output_file
