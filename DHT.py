@@ -38,6 +38,8 @@ def getIrrigationTime():
     global cimisET
     global cimisHumidity
     global cimisTemp
+    global localHumidity
+    global localTemp
 
     # get ET, humidity, and temp from CIMIS
     #cimisHumidity = 76 #[76, 71, 65]
@@ -52,7 +54,7 @@ def getIrrigationTime():
     #     ET0 = ET0 + (cimisET[i] / (tempDerate * humidityDerate))
     
     result = time.localtime(time.time())
-    CIMIS.getcimisdata(result.tm_hour)
+    CIMIS.getcimisdata(11)#result.tm_hour)
 
     humidityDerate = cimisHumidity / localHumidity
     tempDerate = localTemp / cimisTemp
@@ -61,14 +63,13 @@ def getIrrigationTime():
     print("ET0: ", ET0)
 
     # get gallons of water needed per hour (using gallons needed per day formula divided by 24)
-    gallons = ((ET0 * pf * sqft *conversion) / IE) / 24
-    #gallons = 3 * gallons
+    gallons = ((ET0 * pf * sqft * conversion) / IE) / 24
     print("Gallons Needed: ", gallons)
 
     # get time to run irrigation in minutes
     # gallons needed / (gallons per min)
     irrigationTime = gallons / systemRate
-    print("Irrigation Time: ", irrigationTime)
+    print("Irrigation Time (min): ", irrigationTime)
 
     # signal relay to turn on
     Relay.systemState = True
@@ -141,7 +142,7 @@ def loop():
             count = 0
         
         # sleep for 1 minute
-        time.sleep(60)
+        time.sleep(5)
         display = False #disable LCD to display
         time.sleep(0.6)
 

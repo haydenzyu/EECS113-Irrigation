@@ -75,12 +75,16 @@ def getcimisdata(hour):
         #print(targ_tmp)
         #print(targ_eto)
         #print(targ_hum)
-        DHT.cimisTemp = hour_entries[hour]['HlyAirTmp']['Value']
-        DHT.cimisET = hour_entries[hour]['HlyEto']['Value']
-        DHT.cimisHumidity = hour_entries[hour]['HlyRelHum']['Value']
+        DHT.cimisTemp = float(hour_entries[hour]['HlyAirTmp']['Value'])
+        DHT.cimisET = float(hour_entries[hour]['HlyEto']['Value'])
+        DHT.cimisHumidity = float(hour_entries[hour]['HlyRelHum']['Value'])
+        print(type(DHT.cimisTemp))
+        print(type(DHT.cimisET))
+        print(type(DHT.cimisHumidity))
+        return
 
 if __name__ == "__main__":
         #xls_path = 'CIMIS_query_irvine_hourly.xlsx'
         #site_names, cimis_data = main()
         #write_output_file(xls_path, cimis_data, site_names)
-        main()
+        getcimisdata(11)

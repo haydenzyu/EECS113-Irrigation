@@ -23,7 +23,10 @@ def loop():
     global output
 
     runTime = DHT.irrigationTime*60
-   
+
+    if (runTime == 0):
+        return
+
     # start a new thread for the PIR sensor
     t = None
     print("starting PIR thread")
