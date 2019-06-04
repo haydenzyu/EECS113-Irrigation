@@ -4,6 +4,7 @@ import time
 ledPin = 12
 sensorPin = 16
 senvar = 0
+start = True
 
 def setup():
     print('IR Program is starting...')
@@ -14,7 +15,7 @@ def setup():
 def loop():
     global senvar
 
-    while True:
+    while start:
         i = GPIO.input(sensorPin)
         if i == GPIO.HIGH:
             GPIO.output(ledPin, GPIO.HIGH)

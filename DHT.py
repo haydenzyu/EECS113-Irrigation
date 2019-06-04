@@ -50,7 +50,7 @@ def getIrrigationTime():
     #     tempDerate = localTemp[i] / cimisTemp[i]
     #     ET0 = ET0 + (cimisET[i] / (tempDerate * humidityDerate))
 
-    humidityDerate = localHumidity / cimisHumidity
+    humidityDerate = cimisHumidity / localHumidity
     tempDerate = localTemp / cimisTemp
     ET0 = cimisET * (tempDerate * humidityDerate)
 
@@ -78,18 +78,18 @@ def getIrrigationTime():
     result = time.localtime(time.time())
     date = str(result.tm_mon)+'/'+str(result.tm_mday)+'/'+str(result.tm_year)+str()
     t = str(result.tm_hour)+':'+str(result.tm_min)+'.'+str(result.tm_min)
-    row = ['Date', 'Time', 'Local ET0', 'Local Humidity', 'Local Temp (F)', 'CIMIS ET0', 'CIMIS Humidity', 'CIMIS Temp (F)']
-    row2 = [date, t, str(ET0), str(localHumidity), str(localTemp), str(cimisET), str(cimisHumidity), str(cimisTemp)]
-    row3 = ['Gallons Needed (gal/hr)', 'Time Needed (min)']
-    row4 = [str(gallons), str(irrigationTime)]
+    row = ['Date', 'Time', 'Local ET0', 'Local Humidity', 'Local Temp (F)', 'CIMIS ET0', 'CIMIS Humidity', 'CIMIS Temp (F)', 'Gallons Needed (gal/hr)', 'Time Needed (min)']
+    row2 = [date, t, str(ET0), str(localHumidity), str(localTemp), str(cimisET), str(cimisHumidity), str(cimisTemp), str(gallons), str(irrigationTime)]
+    #row3 = ['Gallons Needed (gal/hr)', 'Time Needed (min)']
+    #row4 = [str(gallons), str(irrigationTime)]
 
     with open('output.csv', mode='a') as outputFile:
         outputWriter = csv.writer(outputFile)
         #outputWriter.writerow(time.ctime(time.time()))
         outputWriter.writerow(row)
         outputWriter.writerow(row2)
-        outputWriter.writerow(row3)
-        outputWriter.writerow(row4)
+        #outputWriter.writerow(row3)
+        #outputWriter.writerow(row4)
 
     outputFile.close()
 
@@ -100,13 +100,13 @@ def loop():
     global localTemp
     global display
 
-    row = ['Local ET0', 'Local Humidity', 'Local Temp', 'CIMIS ET0', 'CIMIS Humidity', 'CIMIS Temp']
+    #row = ['Local ET0', 'Local Humidity', 'Local Temp', 'CIMIS ET0', 'CIMIS Humidity', 'CIMIS Temp']
 
-    with open('output.csv', mode='a') as outputFile:
-        outputWriter = csv.writer(outputFile)
-        outputWriter.writerow(row)
+    #with open('output.csv', mode='a') as outputFile:
+    #    outputWriter = csv.writer(outputFile)
+    #    outputWriter.writerow(row)
 
-    outputFile.close()
+    #outputFile.close()
 
     dht = DHT.DHT(thermoPin)        # creates DHT class object
     count = 0                       # initialize minute count for an hour

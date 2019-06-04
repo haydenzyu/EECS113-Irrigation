@@ -38,6 +38,7 @@ def loop():
 
     # loop to keep irrigation on
     print("Start irrigating")
+    PIR.start = True
     while (True):
         # if the motion sensor triggered, pause system run
         if (PIR.senvar == 1):
@@ -72,6 +73,7 @@ def loop():
         
         time.sleep(0.5)        
 
+    PIR.start = False
     print("Stop irrigation")
 
 def setup():
