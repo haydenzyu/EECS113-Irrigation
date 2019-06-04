@@ -18,19 +18,18 @@ import CIMIS
 thermoPin = 11
 localHumidity = 0.0
 localTemp = 0.0
-hour = 0
 irrigationTime = 0.0
 sqft = 200          # 200 square feet to be irrigated
 pf = 1.0            # plant factor for lawn
 conversion = 0.62   # constant conversion factor
 IE = 0.75           # irrigation efficiency (suggested to use 0.75)
 systemRate = 17     # 17 gallons per minute = 1020 gallons per hour
-ET0 = 0
-cimisHumidity = 0
+ET0 = 0             # variable for calculated ET0
+cimisHumidity = 0   # variables to store the pulled CIMIS data
 cimisTemp = 0
 cimisET = 0
 
-display = False
+display = False     # to control LCD display
 
 def getIrrigationTime():
     global irrigationTime
@@ -54,18 +53,22 @@ def getIrrigationTime():
     #     ET0 = ET0 + (cimisET[i] / (tempDerate * humidityDerate))
     
     # get date and hour to search for CIMIS data
+    # format month for date string
     result = time.localtime(time.time())
-    if (result.tm_mon/10 == 0):
+    if (result.tm_mon/10 == 0):                 
         month = '0'+str(result.tm_mon)
     else:
         month = str(result.tm_mon)
-    if (result.tm_mday/10 == 0):
+    # format day for date string
+    if (result.tm_mday/10 == 0):                
         day = '0'+str(result.tm_mday)
     else:
         day = result.tm_mday
+    # formulate date string and send as argument to CIMIS function
     date = str(result.tm_year)+'-'+month+'-'+day
     CIMIS.getcimisdata(11, '2019-06-03')#result.tm_hour, date)
 
+    # get derating factors for humidity and temp and apply to the ET0 to get local average
     humidityDerate = cimisHumidity / localHumidity
     tempDerate = localTemp / cimisTemp
     ET0 = cimisET * (tempDerate * humidityDerate)
@@ -77,11 +80,11 @@ def getIrrigationTime():
     print("Gallons Needed: ", gallons)
 
     # get time to run irrigation in minutes
-    # gallons needed / (gallons per min)
+    # gallons needed / (gallons per min) = minutes needed to run 
     irrigationTime = gallons / systemRate
     print("Irrigation Time (min): ", irrigationTime)
 
-    # signal relay to turn on
+    # signal relay to turn on and start relay thread
     Relay.systemState = True
     t = None
     print("starting Relay/Motor thread")
@@ -89,7 +92,7 @@ def getIrrigationTime():
     t.daemon = True
     t.start()
 
-    # open file to store information for the hour
+    # open output file to store information for the hour
     date = str(result.tm_mon)+'/'+str(result.tm_mday)+'/'+str(result.tm_year)
     t = str(result.tm_hour)+':'+str(result.tm_min)+'.'+str(result.tm_sec)
     #row = ['Date', 'Time', 'Local ET0', 'Local Humidity', 'Local Temp (F)', 'CIMIS ET0', 'CIMIS Humidity', 'CIMIS Temp (F)', 'Gallons Needed (gal/hr)', 'Time Needed (min)']
@@ -104,7 +107,6 @@ def getIrrigationTime():
 
 
 def loop():
-    global hour
     global localHumidity
     global localTemp
     global display
