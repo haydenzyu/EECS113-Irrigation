@@ -4,7 +4,7 @@ import csv
 import pprint
 import DHT
 
-def getcimisdata(hour):
+def getcimisdata(hour, date):
         #appKey = 'a28ddf14-568e-45b8-8050-6925a8ff77e1'  # cimis appKey
         #appKey = '3cae5dfd-ef01-49e4-b6f4-0441a144c5e5'
         #appKey = '952d594c-ff2e-4011-b1d9-8d62e6300ec8'
@@ -15,7 +15,7 @@ def getcimisdata(hour):
         sites = [str(i) for i in sites]  # convert list of ints to strings
         ItemInterval = 'hourly'
         # start date fomat in YYYY-MM-DD
-        start = '2019-06-03'
+        start = date
         # end date fomat in YYYY-MM-DD
         # e.g. pull all data from start until today
         end = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -87,4 +87,4 @@ if __name__ == "__main__":
         #xls_path = 'CIMIS_query_irvine_hourly.xlsx'
         #site_names, cimis_data = main()
         #write_output_file(xls_path, cimis_data, site_names)
-        getcimisdata(11)
+        getcimisdata(11, '2019-06-03')

@@ -53,8 +53,18 @@ def getIrrigationTime():
     #     tempDerate = localTemp[i] / cimisTemp[i]
     #     ET0 = ET0 + (cimisET[i] / (tempDerate * humidityDerate))
     
+    # get date and hour to search for CIMIS data
     result = time.localtime(time.time())
-    CIMIS.getcimisdata(11)#result.tm_hour)
+    if (result.tm_mon/10 == 0):
+        month = '0'+str(result.tm_mon)
+    else:
+        month = str(result.tm_mon)
+    if (result.tm_mday/10 == 0):
+        day = '0'+str(result.tm_mday)
+    else:
+        day = result.tm_mday
+    date = str(result.tm_year)+'-'+month+'-'+day
+    CIMIS.getcimisdata(11, '2019-06-03')#result.tm_hour, date)
 
     humidityDerate = cimisHumidity / localHumidity
     tempDerate = localTemp / cimisTemp
