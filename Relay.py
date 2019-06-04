@@ -23,7 +23,8 @@ def loop():
     global output
 
     runTime = DHT.irrigationTime*60
-    
+   
+    # start a new thread for the PIR sensor
     t = None
     print("starting PIR thread")
     t = threading.Thread(target=PIR.loop)
@@ -34,13 +35,14 @@ def loop():
 
     output = False
 
+    # send signal to relay switch to turn on motor
     GPIO.output(relayPin, output)
 
     # loop to keep irrigation on
     print("Start irrigating")
     PIR.start = True
     while (True):
-        # if the motion sensor triggered, pause system run
+        # if the motion sensor triggered, pause system 
         if (PIR.senvar == 1):
             print("Pause irrigation")
             output = True
@@ -71,8 +73,10 @@ def loop():
             GPIO.output(relayPin, True)
             break
         
+        # 0.5 second sleep delay for loop/sensor
         time.sleep(0.5)        
-
+    
+    # when finished irrigation time, kill PIR thread
     PIR.start = False
     print("Stop irrigation")
 

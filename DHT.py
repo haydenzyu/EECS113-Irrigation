@@ -13,6 +13,7 @@ import RPi.GPIO as GPIO
 import Freenove_DHT as DHT
 import Relay
 import csv
+import CIMIS
 
 thermoPin = 11
 localHumidity = 0.0
@@ -39,9 +40,9 @@ def getIrrigationTime():
     global cimisTemp
 
     # get ET, humidity, and temp from CIMIS
-    cimisHumidity = 76 #[76, 71, 65]
-    cimisTemp = 61.3 #[61.3, 63.8, 66.8]
-    cimisET = 0.01 #[0.01, 0.02, 0.03]
+    #cimisHumidity = 76 #[76, 71, 65]
+    #cimisTemp = 61.3 #[61.3, 63.8, 66.8]
+    #cimisET = 0.01 #[0.01, 0.02, 0.03]
 
     # get humidty and temp derating factors 
     # get ET0 for the 3 hours using these factors and CIMIS ET
@@ -49,6 +50,9 @@ def getIrrigationTime():
     #     humidityDerate = localHumidity[i] / cimisHumidity[i]
     #     tempDerate = localTemp[i] / cimisTemp[i]
     #     ET0 = ET0 + (cimisET[i] / (tempDerate * humidityDerate))
+    
+    result = time.localtime(time.time())
+    CIMIS.getcimisdata(result.tm_hour)
 
     humidityDerate = cimisHumidity / localHumidity
     tempDerate = localTemp / cimisTemp
@@ -74,22 +78,16 @@ def getIrrigationTime():
     t.daemon = True
     t.start()
 
-    # open file to write information
-    result = time.localtime(time.time())
-    date = str(result.tm_mon)+'/'+str(result.tm_mday)+'/'+str(result.tm_year)+str()
-    t = str(result.tm_hour)+':'+str(result.tm_min)+'.'+str(result.tm_min)
-    row = ['Date', 'Time', 'Local ET0', 'Local Humidity', 'Local Temp (F)', 'CIMIS ET0', 'CIMIS Humidity', 'CIMIS Temp (F)', 'Gallons Needed (gal/hr)', 'Time Needed (min)']
+    # open file to store information for the hour
+    date = str(result.tm_mon)+'/'+str(result.tm_mday)+'/'+str(result.tm_year)
+    t = str(result.tm_hour)+':'+str(result.tm_min)+'.'+str(result.tm_sec)
+    #row = ['Date', 'Time', 'Local ET0', 'Local Humidity', 'Local Temp (F)', 'CIMIS ET0', 'CIMIS Humidity', 'CIMIS Temp (F)', 'Gallons Needed (gal/hr)', 'Time Needed (min)']
     row2 = [date, t, str(ET0), str(localHumidity), str(localTemp), str(cimisET), str(cimisHumidity), str(cimisTemp), str(gallons), str(irrigationTime)]
-    #row3 = ['Gallons Needed (gal/hr)', 'Time Needed (min)']
-    #row4 = [str(gallons), str(irrigationTime)]
 
     with open('output.csv', mode='a') as outputFile:
         outputWriter = csv.writer(outputFile)
-        #outputWriter.writerow(time.ctime(time.time()))
-        outputWriter.writerow(row)
+        #outputWriter.writerow(row)
         outputWriter.writerow(row2)
-        #outputWriter.writerow(row3)
-        #outputWriter.writerow(row4)
 
     outputFile.close()
 
@@ -100,13 +98,14 @@ def loop():
     global localTemp
     global display
 
-    #row = ['Local ET0', 'Local Humidity', 'Local Temp', 'CIMIS ET0', 'CIMIS Humidity', 'CIMIS Temp']
+    
+    row = ['Date (MM/DD/YYYY)','Time','Local ET0', 'Local Humidity', 'Local Temp(F)', 'CIMIS ET0', 'CIMIS Humidity', 'CIMIS Temp (F)', 'Gallons Needed (gal/hr)', 'Time Needed (min)']
 
-    #with open('output.csv', mode='a') as outputFile:
-    #    outputWriter = csv.writer(outputFile)
-    #    outputWriter.writerow(row)
+    with open('output.csv', mode='a') as outputFile:
+        outputWriter = csv.writer(outputFile)
+        outputWriter.writerow(row)
 
-    #outputFile.close()
+    outputFile.close()
 
     dht = DHT.DHT(thermoPin)        # creates DHT class object
     count = 0                       # initialize minute count for an hour
@@ -134,13 +133,9 @@ def loop():
         # check CIMIS for new data
         # if there is new data for the hour
         result = time.localtime(time.time())
-        if (count >= 60 or result.tm_min == 59):
+        if (count >= 5 or result.tm_min == 59):
             getIrrigationTime()
 
-            # clear the past 3 hours of data
-            # for i in range (0, 2):
-            #     localHumidity[i] = 0
-            #     localTemp[i] = 0
             localHumidity = 0
             localTemp = 0
             count = 0
@@ -150,6 +145,3 @@ def loop():
         display = False #disable LCD to display
         time.sleep(0.6)
 
-        # if (count >= 60):
-        #     count = 0
-            #hour = (hour + 1) % 3
