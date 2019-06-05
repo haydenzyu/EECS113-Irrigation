@@ -63,7 +63,7 @@ def getIrrigationTime():
     if (result.tm_mday/10 == 0):                
         day = '0'+str(result.tm_mday)
     else:
-        day = result.tm_mday
+        day = str(result.tm_mday)
     # formulate date string and send as argument to CIMIS function
     date = str(result.tm_year)+'-'+month+'-'+day
     CIMIS.getcimisdata(11, '2019-06-03')#result.tm_hour, date)
