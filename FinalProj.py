@@ -22,7 +22,7 @@ def setup():
     GPIO.setup(sensorPin, GPIO.IN)
     GPIO.setup(relayPin, GPIO.OUT)
     GPIO.setup(ledPin, GPIO.OUT)
-    GPIO.output(relayPin, True)
+    GPIO.output(relayPin, True)         # initialize relay switch to off
 
 def loop():
     #Start threads
@@ -41,6 +41,7 @@ def loop():
 
 def destroy():
     GPIO.output(relayPin, True)
+    GPIO.output(ledPin, GPIO.LOW)
     GPIO.cleanup()
 
 # main function to start program

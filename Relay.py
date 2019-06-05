@@ -17,22 +17,16 @@ thermoPin = 11
 ledPin = 12
 sensorPin = 16
 relayPin = 7
-output = True          # system initialized to false
+output = True          # system initialized to off 
 
 def loop():
     global output
 
+    # convert irrigation time from minutes to seconds
     runTime = DHT.irrigationTime*60
 
     if (runTime == 0):
         return
-
-    # start a new thread for the PIR sensor
-    t = None
-    print("starting PIR thread")
-    t = threading.Thread(target=PIR.loop)
-    t.daemon = True
-    t.start()
 
     start = time.time()     # get the start time of irrigation
 
@@ -44,15 +38,23 @@ def loop():
     # loop to keep irrigation on
     print("Start irrigating")
     PIR.start = True
+
+    # start a new thread for the PIR sensor
+    t = None
+    print("starting PIR thread")
+    t = threading.Thread(target=PIR.loop)
+    t.daemon = True
+    t.start()
+
     while (True):
         # if the motion sensor triggered, pause system 
         if (PIR.senvar == 1):
             print("Pause irrigation")
             output = True
-            GPIO.output(relayPin, True)
+            GPIO.output(relayPin, True) # send signal to relay to turn off the motor
+            
             # loop to wait 1 min or until motion no longer detected
             pauseStart = time.time()
-
             while(True):
                 # break loop and resume irrigation if 1 min exceeded
                 if ((time.time()-pauseStart) > 60):
@@ -65,9 +67,8 @@ def loop():
                     GPIO.output(relayPin, False)
                     break
 
-                runTime += 1
-                #offTime = offTime - 1
-                time.sleep(0.5)
+                runTime += 0.5      # add the extra paused time to the run time
+                time.sleep(0.5)     # quick sleep delay
             print("Resume Irrigation")
 
         # if irrigation pause over a minute, resume irrigating
@@ -92,7 +93,8 @@ def setup():
     GPIO.setup(ledPin, GPIO.OUT)
 
 def destroy():
-    GPIO.output([relayPin, ledPin], GPIO.LOW)
+    GPIO.output(relayPin, True)
+    GPIO.output(ledPin, GPIO.LOW)
     GPIO.cleanup()
 
 # main function to start program
