@@ -21,7 +21,7 @@ def get_cpu_temp():     # get CPU temperature and store it into file "/sys/class
     return '{:.2f}'.format( float(cpu)/1000 ) + ' C'
  
 def get_time_now():     # get system time
-    return datetime.now().strftime('    %H:%M:%S\n')
+    return datetime.now().strftime('%H:%M:%S ')
     
 def loop():
     #print("hi")
@@ -41,22 +41,20 @@ def display_cimis():#local_temp, local_hum, c_temp, c_hum, local_ET, cimis_ET, w
     sleep(1) #wait for DHT thread to start
     while True:
 #Create strings for the variables
-        #print(Relay.output)
         if(Relay.output==False):
             mode = 'On'
         else:
             mode = 'Off'
-        relay_str = 'Water: ' + mode + ' '
-        local_temp_str = 'Local Temp: ' + str(DHT.localTemp) + ' '
-        local_hum_str = 'Local Humidity: ' + str(DHT.localHumidity) + ' '
-        c_temp_str = 'CIMIS Temp: ' + str(DHT.cimisTemp) + ' '
-        c_hum_str = 'CIMIS Humidity: ' + str(DHT.cimisHumidity) + ' '
+        relay_str = 'Mode: ' + mode + ' '
+        local_temp_str = 'Local Temp:' + str(DHT.localTemp) + ' '
+        local_hum_str = 'Local Humidity:' + str(DHT.localHumidity) + ' '
+        c_temp_str = 'CIMIS Temp:' + str(DHT.cimisTemp) + ' '
+        c_hum_str = 'CIMIS Humidity:' + str(DHT.cimisHumidity) + ' '
         local_ET_str = 'Local ET:' + str(DHT.ET0) + ' '
         cimis_ET_str = 'CIMIS ET:' + str(DHT.cimisET) + ' '
-        water_saving_str = 'Water Saved: ' + str(0) + ' '
-        addi_water_str = 'Additional Water Used: ' + str(0) + ' '
-        #print(DHT.display)
-        top_line = relay_str + local_temp_str + local_hum_str #concatenate strings for top line on LCD
+        water_saving_str = 'Water Saved:' + str(0) + ' '
+        addi_water_str = 'Additional Water Used:' + str(0) + ' '
+        top_line = get_time_now() + relay_str + local_temp_str + local_hum_str #concatenate strings for top line on LCD
         if(DHT.ET0>0 or DHT.cimisET>0):
             bot_line = c_temp_str + c_hum_str + local_ET_str + cimis_ET_str + water_saving_str + addi_water_str #concatenate strings for bottom line on LCD
             while DHT.display:
@@ -95,3 +93,8 @@ except:
 # Create LCD, passing in MCP GPIO adapter.
 lcd = Adafruit_CharLCD(pin_rs=0, pin_e=2, pins_db=[4,5,6,7], GPIO=mcp)
 
+if __name__ == "__main__":
+    try:
+        loop()
+    except KeyboardInterrupt:
+        destroy()
