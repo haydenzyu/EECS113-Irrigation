@@ -142,7 +142,7 @@ def loop():
             count = 0
         
         # sleep for 1 minute
-        time.sleep(5)
+        time.sleep(60)
         display = False #disable LCD to display
         time.sleep(0.6)
 

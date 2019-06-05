@@ -28,9 +28,9 @@ def loop():
     mcp.output(3,1)     # turn on LCD backlight
     lcd.begin(16,2)     # set number of LCD lines and columns
     while(True):         
-        #lcd.clear()
+        lcd.clear()
         lcd.setCursor(0,0)  # set cursor position
-        #lcd.message( 'CPU: ' + get_cpu_temp()+'\n' )# display CPU temperature
+        lcd.message( 'CPU: ' + get_cpu_temp()+'\n' )# display CPU temperature
         lcd.message( get_time_now() )   # display the time
         sleep(1)	
 	
@@ -77,7 +77,7 @@ def display_cimis():#local_temp, local_hum, c_temp, c_hum, local_ET, cimis_ET, w
         sleep(1) #DHT time buffer
 #end of create strings
 		
-		
+                
 def destroy():
     lcd.clear()
     
