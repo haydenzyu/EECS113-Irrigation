@@ -85,16 +85,17 @@ def getIrrigationTime():
         displaycimis = True
         for i in range(0, len(localHourly)):
             # get cimis data for the next hour in the list
-            CIMIS.getHourData(localHourly[i][0], localHourly[i][0])
+            CIMIS.getHourData(localHourly[0][0], localHourly[0][0])
 
             # if the cimis has not been updated for that hour then break
             if (not cimisET):
                 break
         
-            humidityDerate = cimisHumidity / localHourly[i][2]
-            tempDerate = localHourly[i][3] / cimisTemp
+            humidityDerate = cimisHumidity / localHourly[0][2]
+            tempDerate = localHourly[0][3] / cimisTemp
             currET = cimisET * (tempDerate * humidityDerate)
             ET0 = ET0 + (cimisET * (tempDerate * humidityDerate))
+            localHourly.remove(0)
 
         # get derating factors for humidity and temp and apply to the ET0 to get local average
         # humidityDerate = cimisHumidity / localHumidity
