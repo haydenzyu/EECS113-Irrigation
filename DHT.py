@@ -16,6 +16,7 @@ import csv
 import CIMIS
 
 thermoPin = 11
+localHourly = []
 localHumidity = 0.0
 localTemp = 0.0
 irrigationTime = 0.0
@@ -28,8 +29,11 @@ ET0 = 0             # variable for calculated ET0
 cimisHumidity = 0   # variables to store the pulled CIMIS data
 cimisTemp = 0
 cimisET = 0
+additionalWater = 0
+waterSaved = 0
 
 display = False     # to control LCD display
+displaycimis = False
 
 def getIrrigationTime():
     global irrigationTime
@@ -66,42 +70,72 @@ def getIrrigationTime():
         day = str(result.tm_mday)
     # formulate date string and send as argument to CIMIS function
     date = str(result.tm_year)+'-'+month+'-'+day
-    CIMIS.getcimisdata(11, '2019-06-03')#result.tm_hour, date)
+    
+    CIMIS.getcimisdata(localHourly[0][0], localHourly[0][1])#result.tm_hour, date)
 
-    # get derating factors for humidity and temp and apply to the ET0 to get local average
-    humidityDerate = cimisHumidity / localHumidity
-    tempDerate = localTemp / cimisTemp
-    ET0 = cimisET * (tempDerate * humidityDerate)
+    if (not cimisET):
+        cimisET = None
+        cimisHumidity = None
+        cimisTemp = None
+        gallons = None
+        irrigationTime = None
+        additionalWater = 0
+        waterSaved = 1020
+    else:
+        for i in range(0, len(localHourly)):
+            # get cimis data for the next hour in the list
+            CIMIS.getHourData(localHourly[i][0], localHourly[i][0])
 
-    print("ET0: ", ET0)
+            # if the cimis has not been updated for that hour then break
+            if (not cimisET):
+                break
+        
+            humidityDerate = cimisHumidity / localHourly[i][2]
+            tempDerate = localHourly[i][3] / cimisTemp
+            currET = cimisET * (tempDerate * humidityDerate)
+            ET0 = ET0 + (cimisET * (tempDerate * humidityDerate))
 
-    # get gallons of water needed per hour (using gallons needed per day formula divided by 24)
-    gallons = ((ET0 * pf * sqft * conversion) / IE) / 24
-    print("Gallons Needed: ", gallons)
+        # get derating factors for humidity and temp and apply to the ET0 to get local average
+        # humidityDerate = cimisHumidity / localHumidity
+        # tempDerate = localTemp / cimisTemp
+        # ET0 = cimisET * (tempDerate * humidityDerate)
 
-    # get time to run irrigation in minutes
-    # gallons needed / (gallons per min) = minutes needed to run 
-    irrigationTime = gallons / systemRate
-    print("Irrigation Time (min): ", irrigationTime)
+        print("ET0: ", ET0)
 
-    # signal relay to turn on and start relay thread
-    Relay.systemState = True
-    t = None
-    print("starting Relay/Motor thread")
-    t = threading.Thread(target=Relay.loop)
-    t.daemon = True
-    t.start()
+        # get gallons of water needed per hour (using gallons needed per day formula divided by 24)
+        gallons = ((ET0 * pf * sqft * conversion) / IE) / 24
+        print("Gallons Total Needed: ", gallons)
+
+        galHour = ((currET * pf * sqft * conversion) / IE) / 24
+        print("Gallons for only this hour: ", galHour)
+
+        # additional water is the total water needed minus the required water for that hour 
+        additionalWater = gallons - galHour
+
+        # water saved is the rate of water per hour minus the total water used
+        waterSaved = 1020 - gallons
+
+        # get time to run irrigation in minutes
+        # gallons needed / (gallons per min) = minutes needed to run 
+        irrigationTime = gallons / systemRate
+        print("Irrigation Time (min): ", irrigationTime)
+
+        # signal relay to turn on and start relay thread
+        Relay.systemState = True
+        t = None
+        print("starting Relay/Motor thread")
+        t = threading.Thread(target=Relay.loop)
+        t.daemon = True
+        t.start()
 
     # open output file to store information for the hour
     date = str(result.tm_mon)+'/'+str(result.tm_mday)+'/'+str(result.tm_year)
     t = str(result.tm_hour)+':'+str(result.tm_min)+'.'+str(result.tm_sec)
-    #row = ['Date', 'Time', 'Local ET0', 'Local Humidity', 'Local Temp (F)', 'CIMIS ET0', 'CIMIS Humidity', 'CIMIS Temp (F)', 'Gallons Needed (gal/hr)', 'Time Needed (min)']
-    row2 = [date, t, str(ET0), str(localHumidity), str(localTemp), str(cimisET), str(cimisHumidity), str(cimisTemp), str(gallons), str(irrigationTime)]
+    row = [date, t, str(ET0), str(localHumidity), str(localTemp), str(cimisET), str(cimisHumidity), str(cimisTemp), str(gallons), str(irrigationTime), str(additionalWater), str(waterSaved)]
 
     with open('output.csv', mode='a') as outputFile:
         outputWriter = csv.writer(outputFile)
-        #outputWriter.writerow(row)
-        outputWriter.writerow(row2)
+        outputWriter.writerow(row)
 
     outputFile.close()
 
@@ -112,7 +146,7 @@ def loop():
     global display
 
     
-    row = ['Date (MM/DD/YYYY)','Time','Local ET0', 'Local Humidity', 'Local Temp(F)', 'CIMIS ET0', 'CIMIS Humidity', 'CIMIS Temp (F)', 'Gallons Needed (gal/hr)', 'Time Needed (min)']
+    row = ['Date (MM/DD/YYYY)','Hour','Local ET0', 'Local Humidity', 'Local Temp(F)', 'CIMIS ET0', 'CIMIS Humidity', 'CIMIS Temp (F)', 'Gallons Needed (gal/hr)', 'Time Needed (min)', 'Additional Water (per hour)', 'Water Saved (per hour)']
 
     with open('output.csv', mode='a') as outputFile:
         outputWriter = csv.writer(outputFile)
@@ -147,6 +181,22 @@ def loop():
         # if there is new data for the hour
         result = time.localtime(time.time())
         if (count >= 5 or result.tm_min == 59):
+            # format month for date string
+            if (result.tm_mon/10 == 0):                 
+                month = '0'+str(result.tm_mon)
+            else:
+                month = str(result.tm_mon)
+            # format day for date string
+            if (result.tm_mday/10 == 0):                
+                day = '0'+str(result.tm_mday)
+            else:
+                day = str(result.tm_mday)
+            # formulate date string and send as argument to CIMIS function
+            date = str(result.tm_year)+'-'+month+'-'+day
+            
+            data = [result.tm_hour, date, localHumidity, localTemp]
+            localHourly.append(data)
+
             getIrrigationTime()
 
             localHumidity = 0

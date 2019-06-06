@@ -4,6 +4,9 @@ import csv
 import pprint
 import DHT
 
+def getHourData(hour, date):
+    # getting cimis data for provided date and hour without accessing site
+
 def getcimisdata(hour, date):
         #appKey = 'a28ddf14-568e-45b8-8050-6925a8ff77e1'  # cimis appKey
         #appKey = '3cae5dfd-ef01-49e4-b6f4-0441a144c5e5'
