@@ -4,7 +4,7 @@ import csv
 import pprint
 import DHT
 
-def getHourData(hour, date):
+#def getHourData(hour, date):
     # getting cimis data for provided date and hour without accessing site
 
 def getcimisdata(hour, date):
