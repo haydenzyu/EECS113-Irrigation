@@ -85,8 +85,8 @@ def getIrrigationTime():
         displaycimis = True
         for i in range(0, len(localHourly)):
             # get cimis data for the next hour in the list
-            CIMIS.getHourData(localHourly[0][0], localHourly[0][0])
-
+            #CIMIS.getHourData(localHourly[0][0], localHourly[0][0])
+            CIMIS.getcimisdata(localHourly[0][0], localHourly[0][1])
             # if the cimis has not been updated for that hour then break
             if (not cimisET):
                 break
