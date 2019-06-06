@@ -52,10 +52,10 @@ def display_cimis():#local_temp, local_hum, c_temp, c_hum, local_ET, cimis_ET, w
         c_hum_str = 'CIMIS Humidity:' + str(DHT.cimisHumidity) + ' '
         local_ET_str = 'Local ET:' + str(DHT.ET0) + ' '
         cimis_ET_str = 'CIMIS ET:' + str(DHT.cimisET) + ' '
-        water_saving_str = 'Water Saved:' + str(0) + ' '
-        addi_water_str = 'Additional Water Used:' + str(0) + ' '
+        water_saving_str = 'Water Saved:' + str(DHT.waterSaved) + ' '
+        addi_water_str = 'Additional Water Used:' + str(DHT.additionalWater) + ' '
         top_line = get_time_now() + relay_str + local_temp_str + local_hum_str #concatenate strings for top line on LCD
-        if(DHT.ET0>0 or DHT.cimisET>0):
+        if(DHT.displaycimis):
             bot_line = c_temp_str + c_hum_str + local_ET_str + cimis_ET_str + water_saving_str + addi_water_str #concatenate strings for bottom line on LCD
             while DHT.display:
                 lcd.setCursor(0,0) # cursor top line
