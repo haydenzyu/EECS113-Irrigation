@@ -82,6 +82,7 @@ def getIrrigationTime():
         additionalWater = 0
         waterSaved = 1020
     else:
+        displaycimis = True
         for i in range(0, len(localHourly)):
             # get cimis data for the next hour in the list
             CIMIS.getHourData(localHourly[i][0], localHourly[i][0])

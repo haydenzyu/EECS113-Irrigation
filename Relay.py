@@ -82,6 +82,7 @@ def loop():
     
     # when finished irrigation time, kill PIR thread
     PIR.start = False
+    DHT.displaycimis = False
     print("Stop irrigation")
 
 def setup():
