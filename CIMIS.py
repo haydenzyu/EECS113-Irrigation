@@ -4,8 +4,28 @@ import csv
 import pprint
 import DHT
 
-#def getHourData(hour, date):
-    # getting cimis data for provided date and hour without accessing site
+hour_entries = {}
+
+# getting cimis data for provided date and hour without accessing site
+def getHourData(hour, date):
+    hour_str = None
+    if hour < 10:
+        hour_str = "0" + str(hour)
+    hour_str = hour_str + "00"
+    pprint.pprint("Hour String")
+    pprint.pprint(hour_str)
+    for i in hour_entries:
+        if hour_entries[i]['Hour'] == hour_str:
+            if hour_entries[hour]['HlyAirTmp']['Value'] != None:
+                DHT.cimisTemp = float(hour_entries[hour]['HlyAirTmp']['Value'])
+                DHT.cimisET = float(hour_entries[hour]['HlyEto']['Value'])
+                DHT.cimisHumidity = float(hour_entries[hour]['HlyRelHum']['Value'])
+                print("Value Found")
+                return
+            else:
+                print("Value not updated")
+        else:
+            print("At " + hour_entries[i]['Hour'])
 
 def getcimisdata(hour, date):
     #appKey = 'a28ddf14-568e-45b8-8050-6925a8ff77e1'  # cimis appKey
@@ -64,7 +84,7 @@ def getcimisdata(hour, date):
     #print(type(records_list))
     #pprint.pprint(records_list)
 
-    hour_entries = {}
+    #moved hour_entries dictionary
 
     for i,val in enumerate(records_list):
         hour_entries[i] = val
@@ -97,3 +117,4 @@ if __name__ == "__main__":
         #site_names, cimis_data = main()
         #write_output_file(xls_path, cimis_data, site_names)
         getcimisdata(11, '2019-06-03')
+        getHourData(4, '2019-06-03')
