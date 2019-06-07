@@ -12,10 +12,10 @@ def getHourData(hour, date):
     if hour < 10:
         hour_str = "0" + str(hour)
     hour_str = hour_str + "00"
-    pprint.pprint("Hour String")
-    pprint.pprint(hour_str)
+    #pprint.pprint("Hour String")
+    #pprint.pprint(hour_str)
     for i in hour_entries:
-        if hour_entries[i]['Hour'] == hour_str:
+        if hour_entries[i]['Hour'] == hour_str and hour_entries[i]['Date'] == date:
             if hour_entries[hour]['HlyAirTmp']['Value'] != None:
                 DHT.cimisTemp = float(hour_entries[hour]['HlyAirTmp']['Value'])
                 DHT.cimisET = float(hour_entries[hour]['HlyEto']['Value'])
@@ -23,9 +23,12 @@ def getHourData(hour, date):
                 print("Value Found")
                 return
             else:
+                DHT.cimisTemp = None
+                DHT.cimisET = None 
+                DHT.cimisHumidity = None 
                 print("Value not updated")
-        else:
-            print("At " + hour_entries[i]['Hour'])
+        #else:
+            #print("At " + hour_entries[i]['Hour'])
 
 def getcimisdata(hour, date):
     #appKey = 'a28ddf14-568e-45b8-8050-6925a8ff77e1'  # cimis appKey
