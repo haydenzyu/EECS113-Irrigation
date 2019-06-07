@@ -59,17 +59,17 @@ def getIrrigationTime():
     # get date and hour to search for CIMIS data
     # format month for date string
     result = time.localtime(time.time())
-    if (result.tm_mon/10 == 0):                 
-        month = '0'+str(result.tm_mon)
-    else:
-        month = str(result.tm_mon)
-    # format day for date string
-    if (result.tm_mday/10 == 0):                
-        day = '0'+str(result.tm_mday)
-    else:
-        day = str(result.tm_mday)
-    # formulate date string and send as argument to CIMIS function
-    date = str(result.tm_year)+'-'+month+'-'+day
+    # if (result.tm_mon/10 == 0):                 
+    #     month = '0'+str(result.tm_mon)
+    # else:
+    #     month = str(result.tm_mon)
+    # # format day for date string
+    # if (result.tm_mday/10 == 0):                
+    #     day = '0'+str(result.tm_mday)
+    # else:
+    #     day = str(result.tm_mday)
+    # # formulate date string and send as argument to CIMIS function
+    # date = str(result.tm_year)+'-'+month+'-'+day
     
     CIMIS.getcimisdata(localHourly[0][0], localHourly[0][1])#result.tm_hour, date)
 
@@ -132,8 +132,8 @@ def getIrrigationTime():
 
     # open output file to store information for the hour
     date = str(result.tm_mon)+'/'+str(result.tm_mday)+'/'+str(result.tm_year)
-    t = str(result.tm_hour)+':'+str(result.tm_min)+'.'+str(result.tm_sec)
-    row = [date, t, str(ET0), str(localHumidity), str(localTemp), str(cimisET), str(cimisHumidity), str(cimisTemp), str(gallons), str(irrigationTime), str(additionalWater), str(waterSaved)]
+    #t = str(result.tm_hour)+':'+str(result.tm_min)+'.'+str(result.tm_sec)
+    row = [date, str(tm_hour), str(ET0), str(localHumidity), str(localTemp), str(cimisET), str(cimisHumidity), str(cimisTemp), str(gallons), str(irrigationTime), str(additionalWater), str(waterSaved)]
 
     with open('output.csv', mode='a') as outputFile:
         outputWriter = csv.writer(outputFile)
