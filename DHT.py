@@ -178,7 +178,7 @@ def loop():
         # check CIMIS for new data
         # if there is new data for the hour
         result = time.localtime(time.time())
-        if (count >= 5 or result.tm_min == 59):
+        if (count >= 60 or result.tm_min == 59):
             # format month for date string
             if (result.tm_mon/10 == 0):                 
                 month = '0'+str(result.tm_mon)
@@ -204,5 +204,5 @@ def loop():
         # sleep for 1 minute
         time.sleep(60)
         display = False #disable LCD to display
-        time.sleep(0.6)
+        time.sleep(0.5)
 
