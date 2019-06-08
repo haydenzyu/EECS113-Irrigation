@@ -89,7 +89,7 @@ def getIrrigationTime():
             tempDerate = localHourly[0][3] / cimisTemp
             currET = cimisET * (tempDerate * humidityDerate)        # get the ET0 for the current time to calculate additional water used for that hour
             ET0 = ET0 + (cimisET * (tempDerate * humidityDerate))   # add derated ET0 to find total ET0 for all hours whose data has been updated
-            localHourly.remove(0)                                   # remove hour from list if data has been used
+            del localHourly[0]                                   # remove hour from list if data has been used
 
         # get derating factors for humidity and temp and apply to the ET0 to get local average
         # humidityDerate = cimisHumidity / localHumidity
