@@ -47,17 +47,6 @@ def getIrrigationTime():
     
     # get current date and time info
     result = time.localtime(time.time())
-    # if (result.tm_mon/10 == 0):                 
-    #     month = '0'+str(result.tm_mon)
-    # else:
-    #     month = str(result.tm_mon)
-    # # format day for date string
-    # if (result.tm_mday/10 == 0):                
-    #     day = '0'+str(result.tm_mday)
-    # else:
-    #     day = str(result.tm_mday)
-    # # formulate date string and send as argument to CIMIS function
-    # date = str(result.tm_year)+'-'+month+'-'+day
     
     # get ET, humidity, and temp from CIMIS
     # check if CIMIS site has been update for first hour in list
@@ -80,7 +69,7 @@ def getIrrigationTime():
         while True:
             # get cimis data for the next hour in the list
             CIMIS.getHourData(localHourly[0][0], localHourly[0][1])
-            #CIMIS.getcimisdata(localHourly[0][0], localHourly[0][1])
+            
             # if the cimis has not been updated for that hour then break
             if (cimisET == None or len(localHourly) == 0):
                 break
@@ -92,18 +81,13 @@ def getIrrigationTime():
             ET0 = ET0 + (cimisET * (tempDerate * humidityDerate))   # add derated ET0 to find total ET0 for all hours whose data has been updated
             localHourly.pop(0)                                      # remove hour from list if data has been used
 
-        print(localHourly)
-        # get derating factors for humidity and temp and apply to the ET0 to get local average
-        # humidityDerate = cimisHumidity / localHumidity
-        # tempDerate = localTemp / cimisTemp
-        # ET0 = cimisET * (tempDerate * humidityDerate)
-
         print("ET0: ", ET0)
 
-        # get gallons of water needed per hour (using gallons needed per day formula divided by 24)
+        # get total gallons of water needed per hour for total ET0 (using gallons needed per day formula divided by 24)
         gallons = ((ET0 * pf * sqft * conversion) / IE) / 24
         print("Gallons Total Needed: ", gallons)
 
+        # get gallons of water needed only for the ET0 of the current hour
         galHour = ((currET * pf * sqft * conversion) / IE) / 24
         print("Gallons for only this hour: ", galHour)
 
@@ -130,7 +114,6 @@ def getIrrigationTime():
 
     # open output file to store information for the hour
     date = str(result.tm_mon)+'/'+str(result.tm_mday)+'/'+str(result.tm_year)
-    #t = str(result.tm_hour)+':'+str(result.tm_min)+'.'+str(result.tm_sec)
     row = [date, str(result.tm_hour), str(ET0), str(localHumidity), str(localTemp), str(cimisET), str(cimisHumidity), str(cimisTemp), str(gallons), str(irrigationTime), str(additionalWater), str(waterSaved)]
 
     with open('output.csv', mode='a') as outputFile:
@@ -193,11 +176,14 @@ def loop():
             # formulate date string and send as argument to CIMIS function
             date = str(result.tm_year)+'-'+month+'-'+day
             
+            # make a list containing the date and local data for the current hour
+            # and append this data to the localHourly list
             data = [result.tm_hour, date, localHumidity, localTemp]
             localHourly.append(data)
 
             getIrrigationTime()
 
+            # reset variables to calculate new data for the new hour
             localHumidity = 0
             localTemp = 0
             count = 0
