@@ -10,6 +10,7 @@ from Adafruit_LCD1602 import Adafruit_CharLCD
 
 from time import sleep, strftime
 from datetime import datetime
+import time
 import threading
 import DHT
 import Relay
@@ -40,6 +41,7 @@ def display_cimis():#local_temp, local_hum, c_temp, c_hum, local_ET, cimis_ET, w
     mode = None
     sleep(1) #wait for DHT thread to start
     while True:
+        lcd.clear()
 #Create strings for the variables
         if(Relay.output==False):
             mode = 'On'
@@ -55,9 +57,14 @@ def display_cimis():#local_temp, local_hum, c_temp, c_hum, local_ET, cimis_ET, w
         water_saving_str = 'Water Saved:' + str(DHT.waterSaved) + ' '
         addi_water_str = 'Additional Water Used:' + str(DHT.additionalWater) + ' '
         top_line = get_time_now() + relay_str + local_temp_str + local_hum_str #concatenate strings for top line on LCD
+        #print(DHT.displaycimis)
         if(DHT.displaycimis):
+            start = time.time()
             bot_line = c_temp_str + c_hum_str + local_ET_str + cimis_ET_str + water_saving_str + addi_water_str #concatenate strings for bottom line on LCD
-            while DHT.display:
+            while True:
+                if (time.time() - start) > 60:
+                    DHT.displaycimis = False
+                    break
                 lcd.setCursor(0,0) # cursor top line
                 lcd.message(top_line[:16])
                 lcd.setCursor(0,1) # cursor bottom line
@@ -73,6 +80,7 @@ def display_cimis():#local_temp, local_hum, c_temp, c_hum, local_ET, cimis_ET, w
                 sleep(0.1)
                 
         sleep(1) #DHT time buffer
+        #DHT.displaycimis = False
 #end of create strings
 		
                 

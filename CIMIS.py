@@ -9,9 +9,13 @@ hour_entries = {}
 # getting cimis data for provided date and hour without accessing site
 def getHourData(hour, date):
     hour_str = None
+    hour += 1
     if hour < 10:
-        hour_str = "0" + str(hour)
-    hour_str = hour_str + "00"
+        hour_str = '0' + str(hour)
+    else:
+        hour_str = str(hour)
+    hour_str = hour_str + '00'
+    print("CIMIS hour: ", hour_str)
     #pprint.pprint("Hour String")
     #pprint.pprint(hour_str)
     for i in hour_entries:

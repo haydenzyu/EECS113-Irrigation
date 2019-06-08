@@ -43,6 +43,7 @@ def getIrrigationTime():
     global cimisTemp
     global localHumidity
     global localTemp
+    global displaycimis
     
     # get current date and time info
     result = time.localtime(time.time())
@@ -81,7 +82,7 @@ def getIrrigationTime():
             CIMIS.getHourData(localHourly[0][0], localHourly[0][1])
             #CIMIS.getcimisdata(localHourly[0][0], localHourly[0][1])
             # if the cimis has not been updated for that hour then break
-            if (not cimisET or len(localHourly) == 0):
+            if (cimisET == None or len(localHourly) == 0):
                 break
         
             # get derating factors for the hour in the list to derate ET0
@@ -89,8 +90,9 @@ def getIrrigationTime():
             tempDerate = localHourly[0][3] / cimisTemp
             currET = cimisET * (tempDerate * humidityDerate)        # get the ET0 for the current time to calculate additional water used for that hour
             ET0 = ET0 + (cimisET * (tempDerate * humidityDerate))   # add derated ET0 to find total ET0 for all hours whose data has been updated
-            del localHourly[0]                                   # remove hour from list if data has been used
+            localHourly.pop(0)                                      # remove hour from list if data has been used
 
+        print(localHourly)
         # get derating factors for humidity and temp and apply to the ET0 to get local average
         # humidityDerate = cimisHumidity / localHumidity
         # tempDerate = localTemp / cimisTemp
@@ -173,7 +175,6 @@ def loop():
         count += 1
         print("Local Humidity: ", localHumidity)
         print("Local Temperature: ", localTemp)
-        display = True #enable LCD to display
         
         # check CIMIS for new data
         # if there is new data for the hour
@@ -201,7 +202,8 @@ def loop():
             localTemp = 0
             count = 0
         
-        # sleep for 1 minute
+        # sleep for 1 minute  
+        display = True #enable LCD to display
         time.sleep(60)
         display = False #disable LCD to display
         time.sleep(0.5)
