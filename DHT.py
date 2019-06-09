@@ -67,11 +67,15 @@ def getIrrigationTime():
     else:
         displaycimis = True
         while True:
+            # if list empty then break
+            if (len(localHourly) == 0):
+                break
+            
             # get cimis data for the next hour in the list
             CIMIS.getHourData(localHourly[0][0], localHourly[0][1])
             
             # if the cimis has not been updated for that hour then break
-            if (cimisET == None or len(localHourly) == 0):
+            if (cimisET == None):
                 break
         
             # get derating factors for the hour in the list to derate ET0
