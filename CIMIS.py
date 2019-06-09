@@ -71,14 +71,24 @@ def getcimisdata(hour, date):
 
     print(url)
     r = requests.get(url).json()
-    #print(type(r))
+    #print(type(r)) #dict
     #pprint.pprint(r)
 
-    data = r['Data']
-    #print(type(data))
+    #data = r['Data']
+    currdata = {}
+    for key in r:
+        currdata = r[key]
+    #print(type(currdata)) #dict
+    #pprint.pprint(currdata)
+
+    #for key in r:
+    #    data = currdata[key]
+    #data = currdata['Data']
+    #print(type(data)) #dict
     #pprint.pprint(data)
 
-    providers = data['Providers']
+    #for key in r:
+    providers = currdata['Providers']
     #now a list and access using providers[int]
     #print(type(providers))
     #pprint.pprint(providers)
@@ -97,14 +107,14 @@ def getcimisdata(hour, date):
         hour_entries[i] = val
 
     #print(type(hour_entries))
-    pprint.pprint(hour_entries)
+    #pprint.pprint(hour_entries)
     
-    #targ_tmp = hour_entries[0]['HlyAirTmp']['Value']
-    #targ_eto = hour_entries[0]['HlyEto']['Value']
-    #targ_hum = hour_entries[0]['HlyRelHum']['Value']
-    #print(targ_tmp)
-    #print(targ_eto)
-    #print(targ_hum)
+    targ_tmp = hour_entries[0]['HlyAirTmp']['Value']
+    targ_eto = hour_entries[0]['HlyEto']['Value']
+    targ_hum = hour_entries[0]['HlyRelHum']['Value']
+    print(targ_tmp)
+    print(targ_eto)
+    print(targ_hum)
     if (not hour_entries[hour]['HlyEto']['Value']):
         DHT.cimisTemp = hour_entries[hour]['HlyAirTmp']['Value']
         DHT.cimisET = hour_entries[hour]['HlyEto']['Value']
