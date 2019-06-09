@@ -3,7 +3,7 @@
 # Filename    : LCD.py
 # Description : Use the LCD display data
 # Author      : Hayden Yu
-# modification: 6/2/19
+# modification: 6/8/19
 ########################################################################
 from PCF8574 import PCF8574_GPIO
 from Adafruit_LCD1602 import Adafruit_CharLCD
@@ -38,15 +38,15 @@ def loop():
 def display_cimis():#local_temp, local_hum, c_temp, c_hum, local_ET, cimis_ET, water_saving, addi_water):
     mcp.output(3,1)     # turn on LCD backlight
     lcd.begin(16,2)     # set number of LCD lines and columns
-    mode = None
+    mode = None #mode for when the water is on or off
     sleep(1) #wait for DHT thread to start
     while True:
         lcd.clear()
-#Create strings for the variables
-        if(Relay.output==False):
+        if(Relay.output==False): #water mode
             mode = 'On'
         else:
             mode = 'Off'
+#Create strings for the variables
         relay_str = 'Mode: ' + mode + ' '
         local_temp_str = 'Local Temp:' + str(DHT.localTemp) + ' '
         local_hum_str = 'Local Humidity:' + str(DHT.localHumidity) + ' '
@@ -56,17 +56,18 @@ def display_cimis():#local_temp, local_hum, c_temp, c_hum, local_ET, cimis_ET, w
         cimis_ET_str = 'CIMIS ET:' + str(DHT.cimisET) + ' '
         water_saving_str = 'Water Saved:' + str(DHT.waterSaved) + ' '
         addi_water_str = 'Additional Water Used:' + str(DHT.additionalWater) + ' '
+#end of create strings
         top_line = get_time_now() + relay_str + local_temp_str + local_hum_str #concatenate strings for top line on LCD
         #print(DHT.displaycimis)
         if(DHT.displaycimis):
             start = time.time()
             bot_line = c_temp_str + c_hum_str + local_ET_str + cimis_ET_str + water_saving_str + addi_water_str #concatenate strings for bottom line on LCD
             while True:
-                if (time.time() - start) > 60:
+                if (time.time() - start) > 60: #don't display cismis data after a minute
                     DHT.displaycimis = False
                     break
                 lcd.setCursor(0,0) # cursor top line
-                lcd.message(top_line[:16])
+                lcd.message(top_line[:16]) #display top line
                 lcd.setCursor(0,1) # cursor bottom line
                 lcd.message(bot_line[:16])# display bottom line
                 top_line = top_line[1:]+top_line[0]# send first char to last 
@@ -75,15 +76,13 @@ def display_cimis():#local_temp, local_hum, c_temp, c_hum, local_ET, cimis_ET, w
         else:
             while DHT.display:
                 lcd.setCursor(0,0) # cursor top line
-                lcd.message(top_line[:16])
+                lcd.message(top_line[:16]) #display message onto LCD
                 top_line = top_line[1:]+top_line[0]# send first char to last 
                 sleep(0.1)
                 
-        sleep(1) #DHT time buffer
-        #DHT.displaycimis = False
-#end of create strings
-		
-                
+        sleep(0.5) #DHT time buffer
+
+
 def destroy():
     lcd.clear()
     
