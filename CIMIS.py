@@ -115,7 +115,7 @@ def getcimisdata(hour, date):
     print(targ_tmp)
     print(targ_eto)
     print(targ_hum)
-    if (not hour_entries[hour]['HlyEto']['Value']):
+    if ((hour_entries[hour]['HlyEto']['Value'] == None) or (hour_entries[hour]['HlyAirTmp']['Value'] == None) or (hour_entries[hour]['HlyRelHum']['Value'] == None)):
         DHT.cimisTemp = hour_entries[hour]['HlyAirTmp']['Value']
         DHT.cimisET = hour_entries[hour]['HlyEto']['Value']
         DHT.cimisHumidity = hour_entries[hour]['HlyRelHum']['Value']

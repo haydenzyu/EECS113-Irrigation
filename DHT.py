@@ -54,7 +54,7 @@ def getIrrigationTime():
 
     # if CIMIS has not been update for first hour in list
     # skip irrigation and wait for data updates
-    if (not cimisET):
+    if ((cimisET == None) or (cimisHumidity == None) or (cimisTemp == None)):
         cimisET = None
         cimisHumidity = None
         cimisTemp = None
