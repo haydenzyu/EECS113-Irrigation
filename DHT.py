@@ -126,6 +126,11 @@ def getIrrigationTime():
 
     outputFile.close()
 
+    currET = 0
+    ET0 = 0
+    cimisHumidity = 0
+    cimisTemp = 0
+
 
 def loop():
     global localHumidity
