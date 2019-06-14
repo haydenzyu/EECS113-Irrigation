@@ -58,6 +58,8 @@ def getIrrigationTime():
         cimisET = None
         cimisHumidity = None
         cimisTemp = None
+        currH = None
+        currT = None
         gallons = None
         irrigationTime = None
         additionalWater = 0
@@ -81,6 +83,8 @@ def getIrrigationTime():
             # get derating factors for the hour in the list to derate ET0
             humidityDerate = cimisHumidity / localHourly[0][2]
             tempDerate = localHourly[0][3] / cimisTemp
+            currT = cimisTemp
+            currH = cimisHumidity
             currET = cimisET * (tempDerate * humidityDerate)        # get the ET0 for the current time to calculate additional water used for that hour
             ET0 = ET0 + (cimisET * (tempDerate * humidityDerate))   # add derated ET0 to find total ET0 for all hours whose data has been updated
             localHourly.pop(0)                                      # remove hour from list if data has been used
@@ -118,7 +122,7 @@ def getIrrigationTime():
 
     # open output file to store information for the hour
     date = str(result.tm_mon)+'/'+str(result.tm_mday)+'/'+str(result.tm_year)
-    row = [date, str(result.tm_hour), str(ET0), str(localHumidity), str(localTemp), str(cimisET), str(cimisHumidity), str(cimisTemp), str(gallons), str(irrigationTime), str(additionalWater), str(waterSaved)]
+    row = [date, str(result.tm_hour), str(ET0), str(localHumidity), str(localTemp), str(cimisET), str(currH), str(currT), str(gallons), str(irrigationTime), str(additionalWater), str(waterSaved)]
 
     with open('output.csv', mode='a') as outputFile:
         outputWriter = csv.writer(outputFile)
