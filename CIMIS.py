@@ -3,6 +3,7 @@ import datetime
 import csv
 import pprint
 import DHT
+import time
 
 hour_entries = {}
 
@@ -33,7 +34,7 @@ def getHourData(hour, date):
                 print("Value not updated")
         #else:
             #print("At " + hour_entries[i]['Hour'])
-
+    
 def getcimisdata(hour, date):
     #appKey = 'a28ddf14-568e-45b8-8050-6925a8ff77e1'  # cimis appKey
     #appKey = '3cae5dfd-ef01-49e4-b6f4-0441a144c5e5'
@@ -63,14 +64,28 @@ def getcimisdata(hour, date):
         + str(station) + '&startDate=' + start + '&endDate=' + end +
         '&dataItems=' + dataItems +'&unitOfMeasure=E')
 
-    #test = requests.head(url)
-    #if test.status_code == 302:
-    #    print("error 302")
-    #else:
-    #    print("200")
+#    test = requests.head(url)    
+    
+#    if test.status_code == 302:
+#        print("error 302")
+#        time.sleep(60)
+#    else:
+#        print("200")
 
     print(url)
-    r = requests.get(url).json()
+
+    #r0 = requests.get(url, timeout = 10)
+    
+    try:
+        r0 = requests.get(url, timeout = 5)
+    except Exception:
+        print("Timed out...")
+        DHT.cimisTemp = None
+        DHT.cimisET = None
+        DHT.cimisHumidity = None
+        return
+
+    r = r0.json()
     #print(type(r)) #dict
     #pprint.pprint(r)
 
