@@ -78,6 +78,9 @@ def getcimisdata(hour, date):
     
     try:
         r0 = requests.get(url, timeout = 5)
+        if test.status_code == 302:
+            print("error 302")
+            return
     except Exception:
         print("Timed out...")
         DHT.cimisTemp = None
@@ -85,7 +88,7 @@ def getcimisdata(hour, date):
         DHT.cimisHumidity = None
         return
 
-    r = r0.json()
+    r = requests.get(url).json()
     #print(type(r)) #dict
     #pprint.pprint(r)
 
