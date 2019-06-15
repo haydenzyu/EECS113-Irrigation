@@ -40,7 +40,7 @@ def getcimisdata(hour, date):
     #appKey = '3cae5dfd-ef01-49e4-b6f4-0441a144c5e5'
     #appKey = '952d594c-ff2e-4011-b1d9-8d62e6300ec8'
     #appKey = 'fe36cc18-4506-4cca-8ba9-c903131fde2f'
-    appKey = 'fe36cc18-4506-4cca-8ba9-c903131fde2f'
+    appKey = 'a5550049-e0d5-438b-99e1-949f85c4d82b'
     # list of CIMIS station ID's from which to query data
     sites = [75]  # uncomment to query single site
     sites = [str(i) for i in sites]  # convert list of ints to strings
@@ -77,7 +77,7 @@ def getcimisdata(hour, date):
     #r0 = requests.get(url, timeout = 10)
     
     try:
-        r0 = requests.get(url, timeout = 5)
+        r0 = requests.get(url, timeout = 10)
         if test.status_code == 302:
             print("error 302")
             return
